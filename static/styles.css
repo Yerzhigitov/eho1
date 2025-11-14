@@ -1,0 +1,1081 @@
+/* Переменные для цветов */
+:root {
+    --color-dark-green: #0B3D2E;
+    --color-main-green: #006B3C;
+    --color-accent: #E91E63;
+    --color-white: #ffffff;
+    --color-light-gray: #f7f7f7;
+    --color-text-body: #333333;
+}
+
+/* Общие стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--color-text-body);
+    background-color: var(--color-white);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Кнопка */
+.btn {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, background-color 0.3s, filter 0.3s ease-in-out;
+}
+
+.btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    border: 2px solid var(--color-accent);
+}
+
+.btn-primary:hover {
+    background-color: #d32f2f;
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.9));
+}
+
+/* Шапка */
+.header {
+    background-color: var(--color-dark-green);
+    color: var(--color-white);
+    padding: 15px 0;
+    position: relative;
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.logo-img {
+    height: 50px;
+    width: auto;
+    vertical-align: middle;
+    transition: transform 0.3s ease-in-out;
+    display: inline-block;
+}
+
+.nav a {
+    color: var(--color-white);
+    text-decoration: none;
+    margin-left: 25px;
+    font-size: 16px;
+    opacity: 0.8;
+    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out, color 0.3s ease-in-out;
+    display: inline-block;
+}
+
+.nav a:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
+    color: var(--color-main-green);
+}
+
+/* Кнопка админа - исправленная и перемещенная правее */
+.admin-login-top {
+    position: absolute;
+    top: 30px;
+    right: -120px;
+    font-size: 28px;
+    color: #ffffff;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.4s ease;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
+    z-index: 1000;
+}
+
+.admin-login-top:hover {
+    transform: scale(1.3) rotate(5deg);
+    color: #E91E63;
+    filter: drop-shadow(0 0 15px #E91E63) drop-shadow(0 0 30px #E91E63);
+}
+
+/* Главный Экран */
+.hero-section {
+    background: url('zelen.jpg') no-repeat center center/cover;
+    background-color: #388e3c;
+    height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--color-white);
+    position: relative;
+    box-shadow: inset 0 0 0 1000px rgba(0,0,0,0.4);
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+}
+
+.hero-content {
+    max-width: 800px;
+    z-index: 2;
+}
+
+.hero-title {
+    font-size: 56px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.hero-subtitle {
+    font-size: 22px;
+    margin-bottom: 40px;
+    font-weight: 500;
+}
+
+/* Секция Преимуществ */
+.benefits-section {
+    background: linear-gradient(135deg, #0B3D2E 0%, #007B47 100%);
+    padding: 80px 0;
+    color: var(--color-white);
+    text-align: center;
+}
+
+.section-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 50px;
+}
+
+.quality-cards-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 30px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 20px 10px 30px 10px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-main-green) var(--color-light-gray);
+}
+
+.quality-cards-grid::-webkit-scrollbar {
+    height: 8px;
+}
+
+.quality-cards-grid::-webkit-scrollbar-track {
+    background: var(--color-light-gray);
+    border-radius: 10px;
+}
+
+.quality-cards-grid::-webkit-scrollbar-thumb {
+    background: var(--color-main-green);
+    border-radius: 10px;
+}
+
+.quality-cards-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--color-dark-green);
+}
+
+/* Карточки */
+.quality-card {
+    flex: 0 0 auto;
+    width: 300px;
+    min-height: 380px;
+    background-color: var(--color-white);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    text-align: center;
+    padding-bottom: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.quality-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.2),
+        0 0 20px rgba(144, 238, 144, 1);
+}
+
+.card-image-container {
+    height: 200px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.quality-card:hover .card-img {
+    transform: scale(1.05);
+}
+
+.card-title {
+    color: var(--color-dark-green);
+    font-size: 1.4em;
+    margin-bottom: 10px;
+    padding: 0 15px;
+}
+
+.card-description {
+    color: var(--color-text-body);
+    font-size: 0.95em;
+    padding: 0 20px;
+    line-height: 1.5;
+}
+
+.card-group-title {
+    background: linear-gradient(90deg, #03a85e, #00a857e7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.section-title.card-group-title {
+    color: #1B5E20;
+    font-weight: 800;
+    font-size: 1.8em;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-top: 50px;
+    padding-bottom: 10px;
+    display: inline-block;
+    border-bottom: 4px solid #00695C;
+}
+
+.benefits-section .section-title:first-child {
+    margin-bottom: 20px;
+}
+
+/* Секция Качества - ОБНОВЛЕНО */
+.quality-section {
+    padding: 100px 0;
+    text-align: center;
+    background-color: var(--color-light-gray);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quality-section .container {
+    width: 100%;
+}
+
+.quality-title {
+    color: var(--color-dark-green);
+    margin-bottom: 40px;
+    font-size: 2.5em;
+}
+
+.quality-content p {
+    font-size: 1.2em;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.eac-mark {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: var(--color-main-green);
+    margin: 30px 0;
+}
+
+/* Подвал */
+.footer {
+    background-color: var(--color-dark-green);
+    color: var(--color-white);
+    padding: 30px 0;
+    font-size: 14px;
+}
+
+.footer .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.logo-img {
+    height: 100px;
+    width: auto;
+    vertical-align: middle;
+    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+}
+
+.logo-link:hover .logo-img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9));
+}
+
+.footer-info p {
+    margin-bottom: 5px;
+    opacity: 0.8;
+}
+
+.footer-logo-img {
+    height: 100px;
+    width: auto;
+    vertical-align: middle;
+    position: relative;
+    left: -25px;
+    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+}
+
+.footer-logo-img:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9));
+}
+
+/* Социальные иконки */
+.social-links {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 15px;
+}
+
+.social-links a i {
+    font-size: 36px;
+    color: var(--color-white);
+    transition: all 0.3s ease;
+}
+
+.instagram-link-fa i {
+    font-size: 40px;
+    color: #E1306C;
+    transition: color 0.3s ease;
+}
+
+.instagram-link-fa i:hover {
+    color: var(--color-accent);
+    transform: scale(1.5);
+}
+
+.tiktok-link-fa i {
+    font-size: 36px;
+    color: var(--color-white);
+    transition: all 0.3s ease;
+}
+
+.tiktok-link-fa i:hover {
+    color: #EE1D52;
+    transform: scale(1.15);
+}
+
+/* Выпадающее меню WhatsApp */
+.whatsapp-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.whatsapp-dropdown-menu {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-white);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    z-index: 1001;
+    margin-bottom: 10px;
+    min-width: 240px;
+    padding: 12px;
+}
+
+.whatsapp-option {
+    padding: 12px;
+    transition: background-color 0.3s;
+    margin-bottom: 8px;
+    border-radius: 5px;
+}
+
+.whatsapp-option:last-child {
+    margin-bottom: 0;
+}
+
+.whatsapp-option:hover {
+    background-color: #f8f9fa;
+}
+
+.whatsapp-number {
+    font-weight: 700;
+    color: var(--color-dark-green);
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.whatsapp-name {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.whatsapp-link {
+    display: block;
+    background-color: #25D366;
+    color: white !important;
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.whatsapp-link:hover {
+    background-color: #128C7E;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+}
+
+.dropdown-toggle i {
+    font-size: 36px;
+    color: var(--color-white);
+    transition: all 0.3s ease;
+}
+
+.dropdown-toggle:hover i {
+    color: #25D366;
+    transform: scale(1.15);
+}
+
+.whatsapp-dropdown .whatsapp-label {
+    margin-left: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Стили для выпадающего меню в модальном окне */
+.social-links-modal .whatsapp-dropdown-menu {
+    bottom: auto;
+    top: 100%;
+    margin-bottom: 0;
+    margin-top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.social-links-modal .whatsapp-dropdown .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #25D366;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    background-color: rgba(37, 211, 102, 0.1);
+}
+
+.social-links-modal .whatsapp-dropdown .dropdown-toggle:hover {
+    background-color: rgba(37, 211, 102, 0.2);
+    transform: scale(1.05);
+}
+
+.social-links-modal .whatsapp-dropdown .dropdown-toggle i {
+    font-size: 24px;
+    margin-right: 8px;
+}
+
+/* Формы */
+.contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: var(--color-white);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--color-dark-green);
+    font-size: 16px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="tel"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--color-main-green);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+/* Модальные окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    max-width: 90%;
+    width: 450px;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
+}
+
+@keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: #000;
+    text-decoration: none;
+}
+
+.modal-title {
+    font-size: 30px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--color-dark-green);
+    text-align: center;
+}
+
+.contact-subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.modal-content .contact-form {
+    padding: 0;
+    box-shadow: none;
+    text-align: left;
+}
+
+/* Успешная модалка */
+.center-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.success-ok-btn {
+    padding: 12px 30px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    border: 2px solid var(--color-accent);
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out, background-color 0.3s;
+}
+
+.success-ok-btn:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px rgba(255,0,0,0.9));
+    background-color: #d32f2f;
+}
+
+#success-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Модальное окно контактов */
+.contact-info-block {
+    text-align: left;
+    margin-top: 15px;
+    line-height: 1.8;
+    font-size: 16px;
+}
+
+.contact-info-block i {
+    margin-right: 8px;
+    color: #4CAF50;
+}
+
+.social-links-modal {
+    margin-top: 15px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.social-links-modal a {
+    font-size: 24px;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* WhatsApp в модальном окне */
+.social-links-modal .whatsapp-dropdown .dropdown-toggle i {
+    font-size: 24px;
+    color: #25D366;
+    transition: all 0.3s ease;
+}
+
+.social-links-modal .whatsapp-dropdown .dropdown-toggle:hover i {
+    color: #128C7E;
+    transform: scale(1.15);
+}
+
+/* Instagram в модальном окне */
+.instagram-link-modal i {
+    color: #E1306C;
+    font-size: 24px;
+    transition: all 0.3s ease;
+}
+
+.instagram-link-modal:hover i {
+    color: #C13584;
+    transform: scale(1.15);
+}
+
+/* TikTok в модальном окне */
+.tiktok-link-modal i {
+    color: #000000;
+    font-size: 22px;
+    transition: all 0.3s ease;
+}
+
+.tiktok-link-modal:hover i {
+    color: #EE1D52;
+    transform: scale(1.15);
+}
+
+/* Секция новостей */
+.news-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.news-grid {
+    display: flex;
+    gap: 30px;
+    overflow-x: auto;
+    padding: 20px 10px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.news-card {
+    flex: 0 0 auto;
+    width: 350px;
+    background: var(--color-white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.news-image-container {
+    height: 200px;
+    overflow: hidden;
+}
+
+.news-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.news-card:hover .news-img {
+    transform: scale(1.05);
+}
+
+.news-content {
+    padding: 25px;
+}
+
+.news-title {
+    color: var(--color-dark-green);
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.news-text {
+    color: var(--color-text-body);
+    line-height: 1.6;
+    margin-bottom: 15px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.news-date {
+    color: #666;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+/* Стили для статусов заявок */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-new {
+  background: #ffeb3b;
+  color: #333;
+}
+
+.status-processing {
+  background: #2196f3;
+  color: white;
+}
+
+.status-completed {
+  background: #4caf50;
+  color: white;
+}
+
+/* Стили для кнопок действий с заявками */
+.request-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.status-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.processing-btn {
+  background: #2196f3;
+  color: white;
+}
+
+.processing-btn:hover {
+  background: #1976d2;
+  transform: scale(1.05);
+}
+
+.completed-btn {
+  background: #b7ff00;
+  color: white;
+}
+
+.completed-btn:hover {
+  background: #2701ff;
+  transform: scale(1.05);
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+  transform: scale(1.05);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    .header .container {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding-top: 50px;
+    }
+
+    .nav a {
+        margin-left: 15px;
+        font-size: 14px;
+    }
+
+    .logo-img {
+        height: 40px;
+    }
+
+    /* Кнопка админа на мобильных - перемещена правее */
+    .admin-login-top {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 28px;
+        color: #ffffff;
+        text-decoration: none;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.4s ease;
+        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
+        z-index: 1000;
+        background-color: rgba(11, 61, 46, 0.8);
+        padding: 8px;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+    }
+
+    .hero-section {
+        height: 60vh;
+        padding: 0 15px;
+    }
+
+    .hero-title {
+        font-size: 32px;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+        margin-bottom: 25px;
+    }
+
+    .quality-cards-grid {
+        gap: 15px;
+        padding: 15px 5px 20px 5px;
+    }
+
+    .quality-card {
+        width: 250px;
+        min-height: 350px;
+        padding-bottom: 25px;
+    }
+
+    .card-title {
+        font-size: 1.2em;
+    }
+
+    .card-description {
+        font-size: 0.9em;
+        padding: 0 10px;
+    }
+
+    .section-title {
+        font-size: 24px;
+        margin-bottom: 30px;
+    }
+
+    .card-group-title {
+        font-size: 1.5em;
+        border-bottom-width: 3px;
+    }
+
+    /* Секция качества на мобильных */
+    .quality-section {
+        padding: 60px 15px;
+        min-height: 100vh;
+    }
+
+    .quality-title {
+        font-size: 1.8em;
+        margin-bottom: 30px;
+    }
+
+    .quality-content p {
+        font-size: 16px;
+    }
+
+    .eac-mark {
+        font-size: 1.2em;
+        margin: 20px 0;
+    }
+
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .modal-title {
+        font-size: 24px;
+    }
+
+    .social-links-modal a {
+        font-size: 28px;
+    }
+
+    .footer .container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .footer-logo-img {
+        height: 80px;
+        left: 0;
+    }
+
+    .whatsapp-dropdown-menu {
+        min-width: 200px;
+        left: 0;
+        transform: translateX(-20%);
+    }
+    
+    .whatsapp-option {
+        padding: 10px;
+    }
+    
+    .whatsapp-number {
+        font-size: 14px;
+    }
+    
+    .whatsapp-link {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+    
+    .social-links-modal .whatsapp-dropdown .dropdown-toggle {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+
+    .dropdown-toggle i {
+        font-size: 32px;
+    }
+
+    .social-links {
+        gap: 10px;
+    }
+
+    .social-links a i {
+        font-size: 32px;
+    }
+
+    /* Новости на мобильных */
+    .news-section {
+        padding: 50px 0;
+    }
+    
+    .news-grid {
+        gap: 20px;
+        padding: 15px 5px;
+    }
+    
+    .news-card {
+        width: 280px;
+    }
+    
+    .news-content {
+        padding: 20px;
+    }
+    
+    .news-title {
+        font-size: 1.1em;
+    }
+
+    /* Горизонтальная прокрутка карточек на мобильных */
+    .quality-cards-grid {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        gap: 15px;
+        padding: 15px 10px 20px 10px;
+        scroll-behavior: smooth;
+        width: 100%;
+    }
+
+    .quality-card {
+        flex: 0 0 auto;
+        width: 250px;
+    }
+
+    .quality-cards-grid::-webkit-scrollbar {
+        height: 6px;
+    }
+    .quality-cards-grid::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .quality-cards-grid::-webkit-scrollbar-thumb {
+        background: rgba(0, 107, 60, 0.5);
+        border-radius: 10px;
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+}

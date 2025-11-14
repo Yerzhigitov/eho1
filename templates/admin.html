@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЭКО-СЛАСТИН — Админ-панель</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+body { margin:0; padding:0; font-family:'Montserrat', sans-serif; background:#f4f7f6; display:flex; min-height:100vh; }
+.sidebar { width:250px; background:#1a1a2e; color:#fff; padding:20px 0; position:fixed; height:100%; overflow-y:auto; }
+.sidebar .logo-container { text-align:center; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:20px; }
+.sidebar .logo-img { max-width:80%; }
+.sidebar-nav ul { list-style:none; padding:0; margin:0; }
+.sidebar-nav li a { display:flex; align-items:center; padding:15px 20px; color:#fff; text-decoration:none; font-weight:600; transition:0.3s; }
+.sidebar-nav li a:hover { background:#2b3a55; color:#ffcc00; }
+.sidebar-nav li a.active { background:#006B3C; color:#fff; }
+
+.main-content-wrapper { margin-left:250px; flex-grow:1; display:flex; flex-direction:column; }
+.admin-header { background:#fff; padding:15px 30px; box-shadow:0 2px 4px rgba(0,0,0,0.05); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; }
+.logout-btn { display:flex; align-items:center; background:#dc3545; color:#fff; padding:10px 18px; border-radius:8px; font-weight:600; cursor:pointer; text-decoration:none; transition:all 0.3s ease; }
+.logout-btn i { margin-right:8px; }
+.logout-btn:hover { background:#c82333; transform:scale(1.05); box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+
+.content-area { padding:30px; flex-grow:1; display:none; }
+.content-area.active { display:block; }
+.section-title { font-size:24px; color:#333; margin-bottom:25px; border-bottom:2px solid #ffcc00; padding-bottom:10px; }
+.data-table { width:100%; border-collapse:collapse; background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.05); margin-bottom:20px; }
+.data-table th, .data-table td { padding:12px 15px; border-bottom:1px solid #ddd; text-align:left; }
+.data-table th { background:#f8f8f8; font-weight:700; text-transform:uppercase; }
+
+input, select, button, textarea { padding:8px; margin-right:8px; border-radius:5px; border:1px solid #ccc; font-size:14px; font-family:inherit; }
+.form-group { margin-bottom:15px; }
+.form-group label { display:block; margin-bottom:5px; font-weight:600; }
+.password-container { position: relative; display:inline-block; }
+.password-container i { position:absolute; right:8px; top:50%; transform:translateY(-50%); cursor:pointer; color:#888; }
+button { background:#28a745; color:#fff; border:none; cursor:pointer; transition:all 0.3s ease; }
+button:hover { background:#218838; transform:scale(1.05); }
+.edit-btn, .save-btn, .cancel-btn, .delete-btn { padding:4px 8px; font-size:13px; margin:0 2px; }
+.save-btn { background:#007bff; }
+.save-btn:hover { background:#0069d9; }
+.cancel-btn { background:#6c757d; }
+.cancel-btn:hover { background:#5a6268; }
+.delete-btn { background:#dc3545; }
+.delete-btn:hover { background:#c82333; }
+
+.card-preview { width:100px; height:80px; object-fit:cover; border-radius:4px; }
+.news-content-preview { max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+.dashboard-cards { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:20px; margin-bottom:30px; }
+.dashboard-card { background:#fff; padding:25px; border-radius:10px; box-shadow:0 4px 6px rgba(0,0,0,0.1); text-align:center; }
+.dashboard-card h3 { margin:0 0 10px 0; color:#333; font-size:16px; }
+.dashboard-card .number { font-size:32px; font-weight:700; color:#006B3C; margin:10px 0; }
+.dashboard-card .label { color:#666; font-size:14px; }
+
+/* Стили для загрузки файлов */
+.file-upload-container { margin-bottom:15px; }
+.file-upload-label { display:inline-block; background:#007bff; color:white; padding:10px 15px; border-radius:5px; cursor:pointer; transition:background 0.3s; }
+.file-upload-label:hover { background:#0056b3; }
+.file-upload-input { display:none; }
+.file-name { margin-left:10px; color:#666; }
+.upload-preview { max-width:200px; max-height:150px; margin-top:10px; border-radius:5px; display:none; }
+.upload-progress { width:100%; height:20px; background:#f0f0f0; border-radius:10px; margin-top:10px; overflow:hidden; display:none; }
+.upload-progress-bar { height:100%; background:#007bff; width:0%; transition:width 0.3s; }
+
+.upload-section { background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:20px; border-left:4px solid #007bff; }
+
+/* Стили для форм с прямым добавлением изображений */
+.direct-add-form { background:#fff; padding:20px; border-radius:8px; margin-bottom:20px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+.form-row { display:flex; gap:15px; margin-bottom:15px; align-items:flex-start; }
+.form-row .form-group { flex:1; margin-bottom:0; }
+.image-upload-area { border:2px dashed #ccc; padding:20px; text-align:center; border-radius:8px; cursor:pointer; transition:border-color 0.3s; min-height:120px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.image-upload-area:hover { border-color:#007bff; }
+.image-upload-area i { font-size:48px; color:#ccc; margin-bottom:10px; }
+.image-upload-area.dragover { border-color:#007bff; background:#f0f8ff; }
+.uploaded-image { max-width:200px; max-height:150px; margin-top:10px; border-radius:5px; display:none; }
+.upload-status { margin-top:10px; font-size:12px; color:#666; }
+.image-preview-container { position:relative; display:inline-block; }
+.remove-image { position:absolute; top:-8px; right:-8px; background:#dc3545; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; border:none; }
+
+/* Стили для статусов заявок */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-new {
+  background: #ffeb3b;
+  color: #333;
+}
+
+.status-processing {
+  background: #2196f3;
+  color: white;
+}
+
+.status-completed {
+  background: #4caf50;
+  color: white;
+}
+
+/* Стили для кнопок действий с заявками */
+.request-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.status-btn {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+}
+
+.processing-btn {
+  background: #2196f3;
+  color: white;
+}
+
+.processing-btn:hover {
+  background: #1976d2;
+  transform: scale(1.05);
+}
+
+.completed-btn {
+  background: #4caf50;
+  color: white;
+}
+
+.completed-btn:hover {
+  background: #388e3c;
+  transform: scale(1.05);
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+  transform: scale(1.05);
+}
+
+/* Стили для ролей */
+.role-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-superadmin {
+  background: #dc3545;
+  color: white;
+}
+
+.role-admin {
+  background: #007bff;
+  color: white;
+}
+
+.role-employee {
+  background: #28a745;
+  color: white;
+}
+
+.role-smm {
+  background: #e83e8c;
+  color: white;
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo-container">
+    <img src="/static/logo2.png" alt="Админ-панель" class="logo-img">
+  </div>
+  <nav class="sidebar-nav">
+    <ul>
+      <li><a href="#" class="nav-link active" data-target="dashboard"><i class="fas fa-tachometer-alt"></i> Дашборд</a></li>
+      <li><a href="#" class="nav-link" data-target="cards"><i class="fas fa-images"></i> Карточки</a></li>
+      <li><a href="#" class="nav-link" data-target="news"><i class="fas fa-newspaper"></i> Новости</a></li>
+      <li><a href="#" class="nav-link" data-target="requests"><i class="fas fa-envelope"></i> Заявки</a></li>
+      <li><a href="#" class="nav-link" data-target="users"><i class="fas fa-users"></i> Пользователи</a></li>
+    </ul>
+  </nav>
+</div>
+
+<div class="main-content-wrapper">
+  <header class="admin-header">
+    <h1>Админ-панель ЭКО-СЛАСТИН</h1>
+    <a href="{{ url_for('logout') }}" class="logout-btn">
+      <i class="fas fa-sign-out-alt"></i> Выход
+    </a>
+  </header>
+
+  <!-- Дашборд -->
+  <div class="content-area active" id="dashboard">
+    <h2 class="section-title">📊 Дашборд</h2>
+    <div class="dashboard-cards">
+      <div class="dashboard-card">
+        <h3>Всего заявок</h3>
+        <div class="number" id="total-requests">0</div>
+        <div class="label">Запросы прайс-листа</div>
+      </div>
+      <div class="dashboard-card">
+        <h3>Новые заявки</h3>
+        <div class="number" id="new-requests">0</div>
+        <div class="label">Требуют внимания</div>
+      </div>
+      <div class="dashboard-card">
+        <h3>Карточки</h3>
+        <div class="number" id="total-cards">0</div>
+        <div class="label">Активные карточки</div>
+      </div>
+      <div class="dashboard-card">
+        <h3>Новости</h3>
+        <div class="number" id="total-news">0</div>
+        <div class="label">Опубликовано новостей</div>
+      </div>
+    </div>
+    
+    <h3>Последние заявки</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>ID</th><th>Имя</th><th>Email</th><th>Дата</th></tr>
+      </thead>
+      <tbody id="recent-requests"></tbody>
+    </table>
+  </div>
+
+  <!-- Управление карточками -->
+  <div class="content-area" id="cards">
+    <h2 class="section-title">🖼️ Управление карточками</h2>
+    
+    <div class="direct-add-form">
+      <h3>➕ Добавить карточку с изображением</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Заголовок карточки *</label>
+          <input type="text" id="direct-card-title" placeholder="Например: 🌱 Чистый Состав" style="width:100%;">
+        </div>
+        <div class="form-group">
+          <label>Статус</label>
+          <select id="direct-card-status" style="width:100%;">
+            <option value="true">Активна</option>
+            <option value="false">Неактивна</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Описание карточки *</label>
+        <textarea id="direct-card-description" placeholder="Описание преимущества..." style="width:100%; height:80px;"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Изображение карточки *</label>
+        <div class="image-upload-area" id="card-image-dropzone">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <div>Перетащите изображение сюда или нажмите для выбора</div>
+          <input type="file" id="direct-card-image" class="file-upload-input" accept="image/*" style="display:none;">
+          <div class="upload-status" id="card-upload-status">Максимальный размер: 16MB</div>
+        </div>
+        <div class="image-preview-container">
+          <img id="direct-card-preview" class="uploaded-image" alt="Предпросмотр">
+          <button class="remove-image" onclick="removeCardImage()" style="display:none;">×</button>
+        </div>
+      </div>
+      
+      <button onclick="addCardDirect()" id="direct-card-btn" style="margin-top:15px;">
+        <i class="fas fa-plus"></i> Добавить карточку
+      </button>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Изображение</th>
+          <th>Заголовок</th>
+          <th>Описание</th>
+          <th>Статус</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody id="cards-table-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Управление новостями -->
+  <div class="content-area" id="news">
+    <h2 class="section-title">📰 Управление новостями</h2>
+    
+    <div class="direct-add-form">
+      <h3>➕ Добавить новость с изображением</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Заголовок новости *</label>
+          <input type="text" id="direct-news-title" placeholder="Заголовок новости" style="width:100%;">
+        </div>
+        <div class="form-group">
+          <label>Статус</label>
+          <select id="direct-news-status" style="width:100%;">
+            <option value="true">Опубликована</option>
+            <option value="false">Черновик</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Содержание новости *</label>
+        <textarea id="direct-news-content" placeholder="Текст новости..." style="width:100%; height:100px;"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label>Изображение новости (необязательно)</label>
+        <div class="image-upload-area" id="news-image-dropzone">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <div>Перетащите изображение сюда или нажмите для выбора</div>
+          <input type="file" id="direct-news-image" class="file-upload-input" accept="image/*" style="display:none;">
+          <div class="upload-status" id="news-upload-status">Максимальный размер: 16MB</div>
+        </div>
+        <div class="image-preview-container">
+          <img id="direct-news-preview" class="uploaded-image" alt="Предпросмотр">
+          <button class="remove-image" onclick="removeNewsImage()" style="display:none;">×</button>
+        </div>
+      </div>
+      
+      <button onclick="addNewsDirect()" id="direct-news-btn" style="margin-top:15px;">
+        <i class="fas fa-plus"></i> Добавить новость
+      </button>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Заголовок</th>
+          <th>Содержание</th>
+          <th>Изображение</th>
+          <th>Статус</th>
+          <th>Дата</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody id="news-table-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Заявки -->
+  <div class="content-area" id="requests">
+    <h2 class="section-title">📩 Заявки</h2>
+    <table class="data-table" id="requests-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Имя</th>
+          <th>Email</th>
+          <th>Телефон</th>
+          <th>Сообщение</th>
+          <th>Статус</th>
+          <th>Дата</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- Пользователи -->
+  <div class="content-area" id="users">
+    <h2 class="section-title">👥 Управление пользователями</h2>
+    <div style="margin-bottom:20px;">
+      <input id="new-username" placeholder="Логин">
+      <input id="new-email" placeholder="Email">
+      <div class="password-container">
+        <input id="new-password" type="password" placeholder="Пароль">
+        <i id="toggle-new-password" class="fas fa-eye"></i>
+      </div>
+      <select id="new-role">
+        <option value="employee">Сотрудник</option>
+        <option value="smm">SMM</option>
+        <option value="admin">Администратор</option>
+        <option value="superadmin">Суперадмин</option>
+      </select>
+      <button onclick="addUser()">Добавить</button>
+    </div>
+
+    <table class="data-table" id="users-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Логин</th>
+          <th>Email</th>
+          <th>Роль</th>
+          <th>Пароль</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+// Навигация
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = this.getAttribute('data-target');
+    
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    document.querySelectorAll('.content-area').forEach(c => c.classList.remove('active'));
+    
+    this.classList.add('active');
+    document.getElementById(target).classList.add('active');
+  });
+});
+
+// Функции для загрузки изображений напрямую
+let currentCardImage = null;
+let currentNewsImage = null;
+
+// Инициализация зон загрузки для карточек
+const cardDropzone = document.getElementById('card-image-dropzone');
+const cardFileInput = document.getElementById('direct-card-image');
+const cardPreview = document.getElementById('direct-card-preview');
+const cardRemoveBtn = document.querySelector('.remove-image[onclick="removeCardImage()"]');
+
+cardDropzone.addEventListener('click', () => cardFileInput.click());
+cardFileInput.addEventListener('change', handleCardImageSelect);
+
+cardDropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  cardDropzone.classList.add('dragover');
+});
+
+cardDropzone.addEventListener('dragleave', () => {
+  cardDropzone.classList.remove('dragover');
+});
+
+cardDropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  cardDropzone.classList.remove('dragover');
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    handleCardImageFile(files[0]);
+  }
+});
+
+function handleCardImageSelect(e) {
+  if (e.target.files.length > 0) {
+    handleCardImageFile(e.target.files[0]);
+  }
+}
+
+function handleCardImageFile(file) {
+  if (!file.type.match('image.*')) {
+    alert('Пожалуйста, выберите файл изображения');
+    return;
+  }
+  
+  if (file.size > 16 * 1024 * 1024) {
+    alert('Файл слишком большой. Максимальный размер: 16MB');
+    return;
+  }
+  
+  currentCardImage = file;
+  cardPreview.src = URL.createObjectURL(file);
+  cardPreview.style.display = 'block';
+  cardRemoveBtn.style.display = 'block';
+  document.getElementById('card-upload-status').textContent = `Выбран файл: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+}
+
+function removeCardImage() {
+  currentCardImage = null;
+  cardPreview.style.display = 'none';
+  cardRemoveBtn.style.display = 'none';
+  cardFileInput.value = '';
+  document.getElementById('card-upload-status').textContent = 'Максимальный размер: 16MB';
+}
+
+// Инициализация зон загрузки для новостей
+const newsDropzone = document.getElementById('news-image-dropzone');
+const newsFileInput = document.getElementById('direct-news-image');
+const newsPreview = document.getElementById('direct-news-preview');
+const newsRemoveBtn = document.querySelector('.remove-image[onclick="removeNewsImage()"]');
+
+newsDropzone.addEventListener('click', () => newsFileInput.click());
+newsFileInput.addEventListener('change', handleNewsImageSelect);
+
+newsDropzone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  newsDropzone.classList.add('dragover');
+});
+
+newsDropzone.addEventListener('dragleave', () => {
+  newsDropzone.classList.remove('dragover');
+});
+
+newsDropzone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  newsDropzone.classList.remove('dragover');
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    handleNewsImageFile(files[0]);
+  }
+});
+
+function handleNewsImageSelect(e) {
+  if (e.target.files.length > 0) {
+    handleNewsImageFile(e.target.files[0]);
+  }
+}
+
+function handleNewsImageFile(file) {
+  if (!file.type.match('image.*')) {
+    alert('Пожалуйста, выберите файл изображения');
+    return;
+  }
+  
+  if (file.size > 16 * 1024 * 1024) {
+    alert('Файл слишком большой. Максимальный размер: 16MB');
+    return;
+  }
+  
+  currentNewsImage = file;
+  newsPreview.src = URL.createObjectURL(file);
+  newsPreview.style.display = 'block';
+  newsRemoveBtn.style.display = 'block';
+  document.getElementById('news-upload-status').textContent = `Выбран файл: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+}
+
+function removeNewsImage() {
+  currentNewsImage = null;
+  newsPreview.style.display = 'none';
+  newsRemoveBtn.style.display = 'none';
+  newsFileInput.value = '';
+  document.getElementById('news-upload-status').textContent = 'Максимальный размер: 16MB';
+}
+
+// Функция загрузки изображения и возврата URL
+async function uploadImage(file, type) {
+  const formData = new FormData();
+  formData.append('image', file);
+  formData.append('type', type);
+
+  const response = await fetch('/api/upload-image', {
+    method: 'POST',
+    body: formData
+  });
+  
+  const data = await response.json();
+  if (data.success) {
+    return data.image_url;
+  } else {
+    throw new Error(data.message);
+  }
+}
+
+// Добавление карточки напрямую
+async function addCardDirect() {
+  const title = document.getElementById('direct-card-title').value.trim();
+  const description = document.getElementById('direct-card-description').value.trim();
+  const is_active = document.getElementById('direct-card-status').value === 'true';
+  
+  if (!title || !description) {
+    alert('Заполните заголовок и описание');
+    return;
+  }
+  
+  if (!currentCardImage) {
+    alert('Выберите изображение для карточки');
+    return;
+  }
+  
+  const btn = document.getElementById('direct-card-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+  
+  try {
+    // Сначала загружаем изображение
+    const image_url = await uploadImage(currentCardImage, 'card');
+    
+    // Затем создаем карточку
+    const response = await fetch('/api/cards', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        title, 
+        description, 
+        image_url, 
+        card_type: 'benefit',
+        is_active
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      alert('Карточка успешно добавлена!');
+      // Очищаем форму
+      document.getElementById('direct-card-title').value = '';
+      document.getElementById('direct-card-description').value = '';
+      removeCardImage();
+      loadCards();
+    } else {
+      alert('Ошибка при создании карточки: ' + result.message);
+    }
+  } catch (error) {
+    alert('Ошибка: ' + error.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-plus"></i> Добавить карточку';
+  }
+}
+
+// Добавление новости напрямую
+async function addNewsDirect() {
+  const title = document.getElementById('direct-news-title').value.trim();
+  const content = document.getElementById('direct-news-content').value.trim();
+  const is_published = document.getElementById('direct-news-status').value === 'true';
+  
+  if (!title || !content) {
+    alert('Заполните заголовок и содержание');
+    return;
+  }
+  
+  const btn = document.getElementById('direct-news-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+  
+  try {
+    let image_url = '';
+    
+    // Если есть изображение - загружаем его
+    if (currentNewsImage) {
+      image_url = await uploadImage(currentNewsImage, 'news');
+    }
+    
+    // Создаем новость
+    const response = await fetch('/api/news', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        title, 
+        content, 
+        image_url, 
+        is_published
+      })
+    });
+    
+    const result = await response.json();
+    
+    if (result.success) {
+      alert('Новость успешно добавлена!');
+      // Очищаем форму
+      document.getElementById('direct-news-title').value = '';
+      document.getElementById('direct-news-content').value = '';
+      removeNewsImage();
+      loadNews();
+    } else {
+      alert('Ошибка при создании новости: ' + result.message);
+    }
+  } catch (error) {
+    alert('Ошибка: ' + error.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-plus"></i> Добавить новость';
+  }
+}
+
+// Загрузка дашборда
+function loadDashboard() {
+  fetch('/api/dashboard-stats')
+    .then(r => r.json())
+    .then(stats => {
+      document.getElementById('total-requests').textContent = stats.total_requests;
+      document.getElementById('new-requests').textContent = stats.new_requests;
+      document.getElementById('total-cards').textContent = stats.total_cards;
+      document.getElementById('total-news').textContent = stats.total_news;
+      
+      const tbody = document.getElementById('recent-requests');
+      tbody.innerHTML = stats.recent_requests.map(req => `
+        <tr>
+          <td>${req.id}</td>
+          <td>${req.name}</td>
+          <td>${req.email}</td>
+          <td>${req.created_at}</td>
+        </tr>
+      `).join('');
+    });
+}
+
+// Управление карточками
+function loadCards() {
+  fetch('/api/cards')
+    .then(r => r.json())
+    .then(cards => {
+      const tbody = document.getElementById('cards-table-body');
+      tbody.innerHTML = cards.map(card => `
+        <tr data-id="${card.id}">
+          <td>${card.id}</td>
+          <td><img src="${card.image_url}" alt="Preview" class="card-preview" onerror="this.style.display='none'"></td>
+          <td><input type="text" value="${card.title}" class="card-title" style="width:200px;"></td>
+          <td><textarea class="card-description" style="width:300px; height:60px;">${card.description}</textarea></td>
+          <td>
+            <select class="card-status">
+              <option value="true" ${card.is_active ? 'selected' : ''}>Активна</option>
+              <option value="false" ${!card.is_active ? 'selected' : ''}>Неактивна</option>
+            </select>
+          </td>
+          <td>
+            <button class="save-btn" onclick="saveCard(${card.id})">Сохранить</button>
+            <button class="delete-btn" onclick="deleteCard(${card.id})">Удалить</button>
+          </td>
+        </tr>
+      `).join('');
+    });
+}
+
+function saveCard(cardId) {
+  const tr = document.querySelector(`tr[data-id="${cardId}"]`);
+  const title = tr.querySelector('.card-title').value;
+  const description = tr.querySelector('.card-description').value;
+  const is_active = tr.querySelector('.card-status').value === 'true';
+  
+  fetch(`/api/cards/${cardId}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({title, description, is_active})
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.success) {
+      alert('Карточка обновлена!');
+      loadCards();
+    } else {
+      alert('Ошибка: ' + res.message);
+    }
+  });
+}
+
+function deleteCard(cardId) {
+  if (!confirm('Удалить карточку?')) return;
+  
+  fetch(`/api/cards/${cardId}`, {method: 'DELETE'})
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) {
+        alert('Карточка удалена!');
+        loadCards();
+      }
+    });
+}
+
+// Управление новостями
+function loadNews() {
+  fetch('/api/news')
+    .then(r => r.json())
+    .then(news => {
+      const tbody = document.getElementById('news-table-body');
+      tbody.innerHTML = news.map(item => `
+        <tr data-id="${item.id}">
+          <td>${item.id}</td>
+          <td><input type="text" value="${item.title}" class="news-title" style="width:200px;"></td>
+          <td><textarea class="news-content" style="width:300px; height:60px;">${item.content}</textarea></td>
+          <td>${item.image_url ? `<img src="${item.image_url}" alt="Preview" class="card-preview" onerror="this.style.display='none'">` : 'Нет'}</td>
+          <td>
+            <select class="news-status">
+              <option value="true" ${item.is_published ? 'selected' : ''}>Опубликована</option>
+              <option value="false" ${!item.is_published ? 'selected' : ''}>Черновик</option>
+            </select>
+          </td>
+          <td>${item.created_at}</td>
+          <td>
+            <button class="save-btn" onclick="saveNews(${item.id})">Сохранить</button>
+            <button class="delete-btn" onclick="deleteNews(${item.id})">Удалить</button>
+          </td>
+        </tr>
+      `).join('');
+    });
+}
+
+function saveNews(newsId) {
+  const tr = document.querySelector(`tr[data-id="${newsId}"]`);
+  const title = tr.querySelector('.news-title').value;
+  const content = tr.querySelector('.news-content').value;
+  const is_published = tr.querySelector('.news-status').value === 'true';
+  
+  fetch(`/api/news/${newsId}`, {
+    method: 'PATCH',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({title, content, is_published})
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.success) {
+      alert('Новость обновлена!');
+      loadNews();
+    } else {
+      alert('Ошибка: ' + res.message);
+    }
+  });
+}
+
+function deleteNews(newsId) {
+  if (!confirm('Удалить новость?')) return;
+  
+  fetch(`/api/news/${newsId}`, {method: 'DELETE'})
+    .then(r => r.json())
+    .then(res => {
+      if (res.success) {
+        alert('Новость удалена!');
+        loadNews();
+      }
+    });
+}
+
+// Управление пользователями
+function loadUsers() {
+  fetch('/api/users')
+    .then(r => r.json())
+    .then(users => {
+      const tbody = document.querySelector('#users-table tbody');
+      tbody.innerHTML = '';
+      users.forEach(u => {
+        tbody.innerHTML += `
+          <tr data-id="${u.id}">
+            <td>${u.id}</td>
+            <td class="username">${u.username}</td>
+            <td class="email">${u.email}</td>
+            <td class="role">
+              <span class="role-badge role-${u.role}">${getRoleText(u.role)}</span>
+            </td>
+            <td>
+              <div class="password-container">
+                <input type="password" class="password-input" placeholder="Новый пароль">
+                <i class="fas fa-eye toggle-password"></i>
+              </div>
+            </td>
+            <td>
+              <button class="edit-btn" onclick="editRow(this)">Редактировать</button>
+              <button class="save-btn" style="display:none;" onclick="saveRow(this)">Сохранить</button>
+              <button class="cancel-btn" style="display:none;" onclick="cancelEdit(this)">Отмена</button>
+              <button class="delete-btn" onclick="deleteUser(${u.id})">Удалить</button>
+            </td>
+          </tr>`;
+      });
+
+      document.querySelectorAll('.toggle-password').forEach(icon => {
+        icon.onclick = function(){
+          const input = this.previousElementSibling;
+          input.type = input.type === 'password' ? 'text' : 'password';
+          this.classList.toggle('fa-eye');
+          this.classList.toggle('fa-eye-slash');
+        };
+      });
+    });
+}
+
+function getRoleText(role) {
+  const roleMap = {
+    'superadmin': 'Суперадмин',
+    'admin': 'Администратор',
+    'employee': 'Сотрудник',
+    'smm': 'SMM'
+  };
+  return roleMap[role] || role;
+}
+
+function addUser() {
+  const username = document.getElementById('new-username').value.trim();
+  const email = document.getElementById('new-email').value.trim();
+  const password = document.getElementById('new-password').value;
+  const role = document.getElementById('new-role').value;
+
+  fetch('/api/users', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({username,email,password,role})
+  }).then(r=>r.json())
+    .then(res=>{
+      if(res.success){
+        loadUsers();
+        document.getElementById('new-username').value='';
+        document.getElementById('new-email').value='';
+        document.getElementById('new-password').value='';
+      } else alert(res.message);
+    });
+}
+
+function deleteUser(id) {
+  if(!confirm('Удалить пользователя?')) return;
+  fetch(`/api/users/${id}`,{method:'DELETE'})
+    .then(r=>r.json())
+    .then(()=>loadUsers());
+}
+
+function editRow(btn){
+  const tr = btn.closest('tr');
+  tr.querySelector('.role select')?.remove();
+  const roleCell = tr.querySelector('.role');
+  const roleValue = tr.querySelector('.role-badge').textContent.trim();
+  
+  // Определяем текущее значение роли
+  let currentRole = 'employee';
+  if (roleValue === 'Суперадмин') currentRole = 'superadmin';
+  else if (roleValue === 'Администратор') currentRole = 'admin';
+  else if (roleValue === 'SMM') currentRole = 'smm';
+  
+  roleCell.innerHTML = `<select>
+    <option value="employee" ${currentRole==='employee'?'selected':''}>Сотрудник</option>
+    <option value="smm" ${currentRole==='smm'?'selected':''}>SMM</option>
+    <option value="admin" ${currentRole==='admin'?'selected':''}>Администратор</option>
+    <option value="superadmin" ${currentRole==='superadmin'?'selected':''}>Суперадмин</option>
+  </select>`;
+  tr.querySelector('.edit-btn').style.display='none';
+  tr.querySelector('.save-btn').style.display='inline-block';
+  tr.querySelector('.cancel-btn').style.display='inline-block';
+}
+
+function cancelEdit(btn){
+  loadUsers();
+}
+
+function saveRow(btn){
+  const tr = btn.closest('tr');
+  const id = tr.dataset.id;
+  const role = tr.querySelector('select').value;
+  const password = tr.querySelector('.password-input').value;
+
+  const data = {role};
+  if(password) data.password = password;
+
+  fetch(`/api/users/${id}`,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)
+  }).then(r=>r.json())
+    .then(res=>{
+      if(res.success) loadUsers();
+      else alert(res.message);
+    });
+}
+
+// Управление заявками
+function loadRequests() {
+  fetch('/api/requests')
+    .then(r => r.json())
+    .then(requests => {
+      const tbody = document.querySelector('#requests-table tbody');
+      tbody.innerHTML = '';
+      requests.forEach(r => {
+        tbody.innerHTML += `
+          <tr data-id="${r.id}">
+            <td>${r.id}</td>
+            <td>${r.name}</td>
+            <td>${r.email}</td>
+            <td>${r.phone}</td>
+            <td>${r.message}</td>
+            <td>
+              <span class="status-badge status-${r.status}">${getStatusText(r.status)}</span>
+            </td>
+            <td>${r.created_at}</td>
+            <td>
+              <div class="request-actions">
+                <button class="status-btn processing-btn" onclick="updateRequestStatus(${r.id}, 'processing')">В обработке</button>
+                <button class="status-btn completed-btn" onclick="updateRequestStatus(${r.id}, 'completed')">Исполнено</button>
+                <button class="delete-btn" onclick="deleteRequest(${r.id})">Удалить</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+    });
+}
+
+function getStatusText(status) {
+  const statusMap = {
+    'new': 'Новая',
+    'processing': 'В обработке',
+    'completed': 'Исполнено'
+  };
+  return statusMap[status] || status;
+}
+
+function updateRequestStatus(requestId, status) {
+  fetch(`/api/requests/${requestId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status })
+  })
+  .then(r => r.json())
+  .then(res => {
+    if(res.success) {
+      alert('Статус заявки обновлен!');
+      loadRequests();
+    } else {
+      alert('Ошибка: ' + res.message);
+    }
+  });
+}
+
+function deleteRequest(id) {
+  if(!confirm('Удалить заявку?')) return;
+  fetch(`/api/requests/${id}`, { method:'DELETE' })
+    .then(r => r.json())
+    .then(() => loadRequests());
+}
+
+// Глазик для нового пароля
+document.getElementById('toggle-new-password').onclick = function(){
+  const input = document.getElementById('new-password');
+  input.type = input.type==='password'?'text':'password';
+  this.classList.toggle('fa-eye');
+  this.classList.toggle('fa-eye-slash');
+};
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+  loadDashboard();
+  loadCards();
+  loadNews();
+  loadUsers();
+  loadRequests();
+});
+</script>
+
+</body>
+</html>
