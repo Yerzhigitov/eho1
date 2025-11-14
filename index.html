@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЭКО-Сластин — Натуральный подсластитель</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="container header-container">
+            <a href="#" class="logo-link">
+                <img src="static/logo2.png" alt="ЭКО-СЛАСТИН Логотип" class="logo-img">
+            </a>
+
+            <nav class="nav">
+                <a href="#benefits">Преимущества</a>
+                <a href="#quality">Качество</a>
+                <a href="#news">Новости</a>
+                <a href="#contact">Контакты</a>
+            </nav>
+
+            <a href="/login" class="admin-login-top" title="Вход в админ-панель">
+                <i class="fas fa-user-shield"></i>
+            </a>
+        </div>
+    </header>
+
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="brand-name-highlight">ЭКО-СЛАСТИН</span>: Сладкий вкус. Чистый состав
+            </h1>
+            <p class="hero-subtitle">Подсластитель для производства. НЕ СОДЕРЖИТ ГМО, АСПАРТАМ, ЦИКЛАМАТ НАТРИЯ.</p>
+            <button class="btn btn-primary" id="open-modal-btn">Запросить прайс-лист</button>
+        </div>
+    </section>
+
+    <section id="benefits" class="benefits-section">
+        <div class="container">
+            <h2 class="section-title">Сладость, созданная природой</h2>
+            <h2 class="section-title card-group-title">Наши стандарты</h2> 
+            
+            <div class="quality-cards-grid">
+                {% for card in benefits_cards %}
+                <div class="quality-card">
+                    <div class="card-image-container">
+                        <img src="{{ card.image_url }}" alt="{{ card.title }}" class="card-img" onerror="this.src='static/placeholder.jpg'"> 
+                    </div>
+                    <h3 class="card-title">{{ card.title }}</h3>
+                    <p class="card-description">
+                        {{ card.description }}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    
+    <section id="quality" class="quality-section">
+        <div class="container">
+            <h2 class="section-title quality-title">Гарантия качества и безопасности</h2>
+            <div class="quality-content">
+                <p>Наша продукция соответствует требованиям Технических регламентов Таможенного союза ТР ТС 021/2011, ТР ТС 022/2011, ТР ТС 029/2012.</p>
+                <p class="eac-mark">Действующая декларация о соответствии EAC.</p>
+                <p>Производство: ИП Насибулина Н.Р. Кыргызстан, г. Каракол.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="news" class="news-section">
+        <div class="container">
+            <h2 class="section-title">📰 Новости и события</h2>
+            <div class="news-grid">
+                {% for news in news_items %}
+                <div class="news-card">
+                    {% if news.image_url %}
+                    <div class="news-image-container">
+                        <img src="{{ news.image_url }}" alt="{{ news.title }}" class="news-img" onerror="this.src='static/news-placeholder.jpg'">
+                    </div>
+                    {% endif %}
+                    <div class="news-content">
+                        <h3 class="news-title">{{ news.title }}</h3>
+                        <p class="news-text">{{ news.content }}</p>
+                        <div class="news-date">{{ news.created_at.strftime('%d.%m.%Y') }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <div id="price-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 class="section-title modal-title">Запросить прайс-лист</h2>
+            <p class="contact-subtitle">Оставьте ваши контакты, и мы вышлем полный каталог продукции и оптовые цены.</p>
+
+            <form class="contact-form">
+                <input type="hidden" name="action" value="submit_request">
+                <div class="form-group">
+                    <label for="modal-name">Ваше имя или название компании</label>
+                    <input type="text" id="modal-name" name="name" required placeholder="ООО «Сладкая Жизнь»">
+                </div>
+                <div class="form-group">
+                    <label for="modal-email">Электронная почта</label>
+                    <input type="email" id="modal-email" name="email" required placeholder="pochta@primer.ru">
+                </div>
+                <div class="form-group">
+                    <label for="modal-phone">Номер телефона</label>
+                    <input type="tel" id="modal-phone" name="phone" placeholder="+996 (___) ___-__-__">
+                </div>
+                <div class="form-group">
+                    <label for="modal-message">Дополнительный комментарий (необязательно)</label>
+                    <textarea id="modal-message" name="message" rows="3" placeholder="Интересует объем от 100 кг, для кондитерского производства."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit">Отправить запрос</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="success-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn success-close-btn">&times;</span>
+            <h2 class="section-title modal-title" style="color: #4CAF50;">Заявка успешно отправлена!</h2>
+            <p class="contact-subtitle">
+                <i class="fas fa-check-circle" style="color: #4CAF50; font-size: 40px; margin-bottom: 15px; display: block;"></i>
+                Спасибо, что связались с нами. Мы обработаем ваш запрос в ближайшее время и вышлем прайс-лист на указанный email.
+            </p>
+            <div class="center-button-container"> 
+                <button type="button" class="btn btn-primary success-ok-btn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="contacts-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2 class="section-title modal-title">Свяжитесь с нами</h2>
+            <p class="contact-subtitle">Вы можете связаться с нами любым удобным способом:</p>
+            <div class="contact-info-block">
+                <p><i class="fas fa-phone"></i> Телефон: <b>+996 553 588 528</b> / <b>+996 552 606 226</b></p>
+                <p><i class="fas fa-envelope"></i> Email: <b>nazili4kakg@mail.ru</b></p>
+                <p><i class="fas fa-map-marker-alt"></i> Адрес: Кыргызстан, г. Каракол, Кадыраке 77</p>
+                <div class="social-links-modal">
+
+                    <div class="whatsapp-dropdown">
+                        <a href="#" class="dropdown-toggle">
+                            <i class="fab fa-whatsapp"></i>
+                            <span class="whatsapp-label"></span>
+                        </a>
+                        <div class="whatsapp-dropdown-menu">
+                            <div class="whatsapp-option">
+                                <div class="whatsapp-number">+996 503 700 768</div>
+                                <div class="whatsapp-name">Основной номер</div>
+                                <a href="https://wa.me/996503700768?text=Здравствуйте!%20Я%20заинтересован%20в%20продукции%20ЭКО-СЛАСТИН" target="_blank" class="whatsapp-link">
+                                    Написать в WhatsApp
+                                </a>
+                            </div>
+                            <div class="whatsapp-option">
+                                <div class="whatsapp-number">+996 552 606 226</div>
+                                <div class="whatsapp-name">Дополнительный номер</div>
+                                <a href="https://wa.me/996552606226?text=Здравствуйте!%20Я%20заинтересован%20в%20продукции%20ЭКО-СЛАСТИН" target="_blank" class="whatsapp-link">
+                                    Написать в WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="https://www.instagram.com/rik_napitki_kg?igsh=MWxlN25mNDhsNWx6OA%3D%3D" target="_blank" class="instagram-link-modal">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@napitki_rik.karakol_?_r=1&_t=ZM-91HwQ77i59Q" target="_blank" class="tiktok-link-modal">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <a href="#" class="footer-logo-link"><img src="static/logo2.png" alt="ЭКО-СЛАСТИН Логотип" class="footer-logo-img"></a>
+            <div class="footer-info">
+                <p>Тел.: +(996) 553-588-528, +(996) 552-606-226</p>
+                <p>Email: nazili4kakg@mail.ru</p>
+                <p>Производство: Кыргызстан, г. Каракол</p>
+            </div>
+            <div class="social-links">
+
+                <div class="whatsapp-dropdown">
+                    <a href="#" class="dropdown-toggle">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <div class="whatsapp-dropdown-menu">
+                        <div class="whatsapp-option">
+                            <div class="whatsapp-number">+996 503 700 768</div>
+                            <div class="whatsapp-name">Основной номер</div>
+                            <a href="https://wa.me/996503700768?text=Здравствуйте!%20Я%20заинтересован%20в%20продукции%20ЭКО-СЛАСТИН" target="_blank" class="whatsapp-link">
+                                Написать в WhatsApp
+                            </a>
+                        </div>
+                        <div class="whatsapp-option">
+                            <div class="whatsapp-number">+996 552 606 226</div>
+                            <div class="whatsapp-name">Дополнительный номер</div>
+                            <a href="https://wa.me/996552606226?text=Здравствуйте!%20Я%20заинтересован%20в%20продукции%20ЭКО-СЛАСТИН" target="_blank" class="whatsapp-link">
+                                Написать в WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.instagram.com/rik_napitki_kg?igsh=MWxlN25mNDhsNWx6OA%3D%3D" target="_blank" class="instagram-link-fa">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="https://www.tiktok.com/@napitki_rik.karakol_?_r=1&_t=ZM-91HwQ77i59Q" target="_blank" class="tiktok-link-fa">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+
+        const modal = document.getElementById('price-modal');
+        const openBtn = document.getElementById('open-modal-btn');
+        const closeBtn = modal.querySelector('.close-btn');
+        const form = modal.querySelector('.contact-form');
+        const successModal = document.getElementById('success-modal'); 
+        const successCloseBtn = successModal.querySelector('.success-close-btn'); 
+        const successOkBtn = successModal.querySelector('.success-ok-btn'); 
+
+        function openModal(targetModal) {
+            targetModal.style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal(targetModal) {
+            targetModal.style.display = "none";
+            if (modal.style.display === "none" && successModal.style.display === "none") {
+                document.body.style.overflow = "auto"; 
+            }
+        }
+
+        openBtn.onclick = function() {
+            openModal(modal);
+        }
+
+        closeBtn.onclick = function() {
+            closeModal(modal);
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = {
+                name: document.getElementById('modal-name').value,
+                email: document.getElementById('modal-email').value,
+                phone: document.getElementById('modal-phone').value,
+                message: document.getElementById('modal-message').value
+            };
+
+            fetch('/api/submit-request', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    closeModal(modal);
+                    form.reset();
+                    openModal(successModal);
+                } else {
+                    alert('Ошибка при отправке заявки: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка при отправке заявки');
+            });
+        });
+
+        successCloseBtn.onclick = function() {
+            closeModal(successModal);
+        }
+        
+        successOkBtn.onclick = function() {
+            closeModal(successModal);
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) closeModal(modal);
+            if (event.target == successModal) closeModal(successModal);
+        }
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+
+        const contactsModal = document.getElementById('contacts-modal');
+        const contactsLink = document.querySelector('.nav a[href="#contact"]');
+        const contactsCloseBtn = contactsModal.querySelector('.close-btn');
+
+        function openContactsModal() {
+            contactsModal.style.display = "flex";
+        }
+
+        function closeContactsModal() {
+            contactsModal.style.display = "none";
+        }
+
+        contactsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            openContactsModal();
+        });
+
+        contactsCloseBtn.onclick = function() {
+            closeContactsModal();
+        };
+
+        window.addEventListener('click', function(event) {
+            if (event.target === contactsModal) {
+                closeContactsModal();
+            }
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('.whatsapp-dropdown');
+            
+            dropdowns.forEach(dropdown => {
+                const toggle = dropdown.querySelector('.dropdown-toggle');
+                const menu = dropdown.querySelector('.whatsapp-dropdown-menu');
+                
+                if (!toggle || !menu) return;
+                
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isVisible = menu.style.display === 'block';
+
+                    document.querySelectorAll('.whatsapp-dropdown-menu').forEach(otherMenu => {
+                        if (otherMenu !== menu) {
+                            otherMenu.style.display = 'none';
+                        }
+                    });
+                    menu.style.display = isVisible ? 'none' : 'block';
+                });
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.whatsapp-dropdown')) {
+                    document.querySelectorAll('.whatsapp-dropdown-menu').forEach(menu => {
+                        menu.style.display = 'none';
+                    });
+                }
+            });
+            
+
+            document.querySelectorAll('.whatsapp-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    setTimeout(() => {
+                        document.querySelectorAll('.whatsapp-dropdown-menu').forEach(menu => {
+                            menu.style.display = 'none';
+                        });
+                    }, 100);
+                });
+            });
+        });
+
+        // Горизонтальная прокрутка карточек
+        const scrollContainer = document.querySelector('.quality-cards-grid');
+        if (scrollContainer) {
+            scrollContainer.addEventListener('wheel', (evt) => {
+                evt.preventDefault();
+                scrollContainer.scrollBy({
+                    left: evt.deltaY < 0 ? -150 : 150,
+                    behavior: 'smooth'
+                });
+            });
+
+            let autoScroll;
+            let isHovered = false;
+
+            function startAutoScroll() {
+                autoScroll = setInterval(() => {
+                    if (!isHovered) {
+                        scrollContainer.scrollBy({ left: 1, behavior: 'smooth' });
+                        if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 1) {
+                            scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+                        }
+                    }
+                }, 20);
+            }
+
+            scrollContainer.addEventListener('mouseenter', () => { isHovered = true; });
+            scrollContainer.addEventListener('mouseleave', () => { isHovered = false; });
+            startAutoScroll();
+        }
+
+        const newsGrid = document.querySelector('.news-grid');
+        if (newsGrid && newsGrid.children.length > 3) {
+            let newsAutoScroll;
+            let isNewsHovered = false;
+
+            function startNewsAutoScroll() {
+                newsAutoScroll = setInterval(() => {
+                    if (!isNewsHovered) {
+                        newsGrid.scrollBy({ left: 1, behavior: 'smooth' });
+                        if (newsGrid.scrollLeft + newsGrid.clientWidth >= newsGrid.scrollWidth - 1) {
+                            newsGrid.scrollTo({ left: 0, behavior: 'smooth' });
+                        }
+                    }
+                }, 30);
+            }
+
+            newsGrid.addEventListener('mouseenter', () => { isNewsHovered = true; });
+            newsGrid.addEventListener('mouseleave', () => { isNewsHovered = false; });
+            startNewsAutoScroll();
+        }
+    </script>
+</body>
+</html>
