@@ -6,6 +6,8 @@
     --color-white: #ffffff;
     --color-light-gray: #f7f7f7;
     --color-text-body: #333333;
+    --color-border: #e0e0e0;
+    --color-secondary: #6c757d;
 }
 
 /* Общие стили */
@@ -19,6 +21,7 @@ body {
     font-family: 'Montserrat', sans-serif;
     color: var(--color-text-body);
     background-color: var(--color-white);
+    line-height: 1.6;
 }
 
 .container {
@@ -30,15 +33,16 @@ body {
 /* Кнопка */
 .btn {
     display: inline-block;
-    padding: 12px 30px;
-    border-radius: 5px;
+    padding: 12px 24px;
+    border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
-    font-size: 18px;
-    text-transform: uppercase;
+    font-size: 14px;
     letter-spacing: 0.5px;
     cursor: pointer;
-    transition: transform 0.3s ease-in-out, background-color 0.3s, filter 0.3s ease-in-out;
+    transition: all 0.3s ease;
+    border: none;
+    text-align: center;
 }
 
 .btn-primary {
@@ -49,8 +53,24 @@ body {
 
 .btn-primary:hover {
     background-color: #d32f2f;
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.9));
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--color-secondary);
+    border: 2px solid var(--color-border);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-light-gray);
+    border-color: var(--color-secondary);
+    transform: translateY(-2px);
+}
+
+.btn-full {
+    width: 100%;
 }
 
 /* Шапка */
@@ -82,18 +102,17 @@ body {
     margin-left: 25px;
     font-size: 16px;
     opacity: 0.8;
-    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: all 0.3s ease;
     display: inline-block;
 }
 
 .nav a:hover {
     opacity: 1;
     transform: scale(1.1);
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
     color: var(--color-main-green);
 }
 
-/* Кнопка админа - исправленная и перемещенная правее */
+/* Кнопка админа */
 .admin-login-top {
     position: absolute;
     top: 30px;
@@ -105,14 +124,12 @@ body {
     justify-content: center;
     align-items: center;
     transition: all 0.4s ease;
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
     z-index: 1000;
 }
 
 .admin-login-top:hover {
     transform: scale(1.3) rotate(5deg);
     color: #E91E63;
-    filter: drop-shadow(0 0 15px #E91E63) drop-shadow(0 0 30px #E91E63);
 }
 
 /* Главный Экран */
@@ -127,7 +144,6 @@ body {
     color: var(--color-white);
     position: relative;
     box-shadow: inset 0 0 0 1000px rgba(0,0,0,0.4);
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
 }
 
 .hero-content {
@@ -161,38 +177,20 @@ body {
     margin-bottom: 50px;
 }
 
+/* Карусель */
 .quality-cards-grid {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 10px 40px 10px;
+}
+
+.quality-cards-track {
     display: flex;
-    flex-wrap: nowrap;
-    gap: 30px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 20px 10px 30px 10px;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-main-green) var(--color-light-gray);
+    transition: transform 0.3s ease;
+    will-change: transform;
+    gap: 40px;
 }
 
-.quality-cards-grid::-webkit-scrollbar {
-    height: 8px;
-}
-
-.quality-cards-grid::-webkit-scrollbar-track {
-    background: var(--color-light-gray);
-    border-radius: 10px;
-}
-
-.quality-cards-grid::-webkit-scrollbar-thumb {
-    background: var(--color-main-green);
-    border-radius: 10px;
-}
-
-.quality-cards-grid::-webkit-scrollbar-thumb:hover {
-    background: var(--color-dark-green);
-}
-
-/* Карточки */
 .quality-card {
     flex: 0 0 auto;
     width: 300px;
@@ -203,14 +201,13 @@ body {
     overflow: hidden;
     text-align: center;
     padding-bottom: 30px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .quality-card:hover {
     transform: translateY(-5px);
-    box-shadow: 
-        0 8px 25px rgba(0, 0, 0, 0.2),
-        0 0 20px rgba(144, 238, 144, 1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .card-image-container {
@@ -268,7 +265,38 @@ body {
     margin-bottom: 20px;
 }
 
-/* Секция Качества - ОБНОВЛЕНО */
+/* Скрываем стандартный скроллбар */
+.quality-cards-grid::-webkit-scrollbar {
+    display: none;
+}
+
+.quality-cards-grid {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Индикатор прокрутки */
+.scroll-indicator {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 8px;
+}
+
+.scroll-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+}
+
+.scroll-dot.active {
+    background-color: var(--color-white);
+    transform: scale(1.2);
+}
+
+/* Секция Качества */
 .quality-section {
     padding: 100px 0;
     text-align: center;
@@ -320,12 +348,11 @@ body {
     height: 100px;
     width: auto;
     vertical-align: middle;
-    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
 }
 
 .logo-link:hover .logo-img {
     transform: scale(1.1);
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9));
 }
 
 .footer-info p {
@@ -339,12 +366,11 @@ body {
     vertical-align: middle;
     position: relative;
     left: -25px;
-    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out;
+    transition: transform 0.3s ease-in-out;
 }
 
 .footer-logo-img:hover {
     transform: scale(1.1);
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.9));
 }
 
 /* Социальные иконки */
@@ -361,24 +387,12 @@ body {
     transition: all 0.3s ease;
 }
 
-.instagram-link-fa i {
-    font-size: 40px;
+.instagram-btn:hover i {
     color: #E1306C;
-    transition: color 0.3s ease;
+    transform: scale(1.15);
 }
 
-.instagram-link-fa i:hover {
-    color: var(--color-accent);
-    transform: scale(1.5);
-}
-
-.tiktok-link-fa i {
-    font-size: 36px;
-    color: var(--color-white);
-    transition: all 0.3s ease;
-}
-
-.tiktok-link-fa i:hover {
+.tiktok-btn:hover i {
     color: #EE1D52;
     transform: scale(1.15);
 }
@@ -448,7 +462,6 @@ body {
 .whatsapp-link:hover {
     background-color: #128C7E;
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
 }
 
 .dropdown-toggle i {
@@ -462,57 +475,316 @@ body {
     transform: scale(1.15);
 }
 
-.whatsapp-dropdown .whatsapp-label {
-    margin-left: 8px;
-    font-size: 14px;
-    font-weight: 600;
+/* МОДАЛЬНОЕ ОКНО КАРТОЧКИ - ИЗОБРАЖЕНИЕ СЛЕВА, ОПИСАНИЕ СПРАВА */
+.card-modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    max-width: 90%;
+    width: 800px;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Стили для выпадающего меню в модальном окне */
-.social-links-modal .whatsapp-dropdown-menu {
-    bottom: auto;
-    top: 100%;
-    margin-bottom: 0;
-    margin-top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 
-.social-links-modal .whatsapp-dropdown .dropdown-toggle {
+.card-modal-layout {
+    display: flex;
+    min-height: 500px;
+}
+
+/* Левая колонка - изображение */
+.card-modal-left {
+    flex: 0 0 40%;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--color-border);
+    position: relative;
+}
+
+.product-image-container {
+    width: 100%;
+    max-width: 280px;
+    height: 280px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    margin-bottom: 25px;
+    transition: all 0.3s ease;
+}
+
+.product-image-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-image-container:hover .product-image {
+    transform: scale(1.08);
+}
+
+.product-price-section {
+    text-align: center;
+    width: 100%;
+}
+
+.price-badge {
+    background: linear-gradient(135deg, var(--color-accent), #d32f2f);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+    transition: all 0.3s ease;
+}
+
+.price-badge:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(233, 30, 99, 0.5);
+}
+
+.price-label {
+    display: block;
+    font-size: 0.85em;
+    opacity: 0.9;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.product-price {
+    font-size: 1.5em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Правая колонка - описание */
+.card-modal-right {
+    flex: 1;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.product-header {
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--color-light-gray);
+    padding-bottom: 20px;
+}
+
+.product-title {
+    color: var(--color-dark-green);
+    font-size: 1.7em;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.product-rating {
     display: flex;
     align-items: center;
-    text-decoration: none;
-    color: #25D366;
+    gap: 12px;
+}
+
+.stars {
+    color: #FFD700;
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+
+.rating-text {
+    color: var(--color-secondary);
+    font-size: 0.9em;
     font-weight: 600;
-    padding: 8px 12px;
-    border-radius: 5px;
+}
+
+.product-description {
+    margin-bottom: 25px;
+    background: var(--color-light-gray);
+    padding: 18px;
+    border-radius: 12px;
+    border-left: 4px solid var(--color-main-green);
+}
+
+.product-description p {
+    color: var(--color-text-body);
+    font-size: 0.95em;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.product-details {
+    flex: 1;
+    margin-bottom: 25px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 18px;
+    padding: 18px;
+    background: var(--color-light-gray);
+    border-radius: 12px;
     transition: all 0.3s ease;
-    background-color: rgba(37, 211, 102, 0.1);
+    border: 1px solid transparent;
 }
 
-.social-links-modal .whatsapp-dropdown .dropdown-toggle:hover {
-    background-color: rgba(37, 211, 102, 0.2);
-    transform: scale(1.05);
+.detail-item:hover {
+    background: #e9ecef;
+    transform: translateX(8px);
+    border-color: var(--color-main-green);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-.social-links-modal .whatsapp-dropdown .dropdown-toggle i {
-    font-size: 24px;
-    margin-right: 8px;
+.detail-icon {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--color-main-green), var(--color-dark-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    color: white;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.detail-item:hover .detail-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.detail-content {
+    flex: 1;
+}
+
+.detail-content h4 {
+    color: var(--color-dark-green);
+    font-size: 1.05em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-content p {
+    color: var(--color-text-body);
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: auto;
+}
+
+/* Основные модальные окна */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(10px);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    position: relative;
+    max-width: 90%;
+    width: 500px;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.close-btn {
+    color: #999;
+    float: right;
+    font-size: 26px;
+    font-weight: bold;
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    background: var(--color-light-gray);
+}
+
+.close-btn:hover {
+    color: #000;
+    background-color: #e0e0e0;
+    transform: rotate(90deg);
+}
+
+.modal-title {
+    font-size: 26px;
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--color-dark-green);
+    text-align: center;
+    font-weight: 700;
+}
+
+.contact-subtitle {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #666;
+    font-size: 0.95em;
+    line-height: 1.5;
 }
 
 /* Формы */
 .contact-form {
     max-width: 600px;
     margin: 0 auto;
-    padding: 30px;
-    background-color: var(--color-white);
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 0;
     text-align: left;
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 }
 
 .form-group label {
@@ -520,7 +792,7 @@ body {
     font-weight: 600;
     margin-bottom: 8px;
     color: var(--color-dark-green);
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .form-group input[type="text"],
@@ -528,115 +800,59 @@ body {
 .form-group input[type="tel"],
 .form-group textarea {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: border-color 0.3s;
+    padding: 14px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    background: #fafafa;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
     border-color: var(--color-main-green);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+    box-shadow: 0 0 0 3px rgba(0, 107, 60, 0.1);
+    background: var(--color-white);
 }
 
 .form-group textarea {
     resize: vertical;
+    min-height: 100px;
 }
 
-/* Модальные окна */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 100;
-    left: 0;
-    top: 0;
+.btn-submit {
     width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.6);
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    position: relative;
-    max-width: 90%;
-    width: 450px;
-    animation-name: animatetop;
-    animation-duration: 0.4s;
-}
-
-@keyframes animatetop {
-    from {top: -300px; opacity: 0}
-    to {top: 0; opacity: 1}
-}
-
-.close-btn {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    cursor: pointer;
-}
-
-.close-btn:hover,
-.close-btn:focus {
-    color: #000;
-    text-decoration: none;
-}
-
-.modal-title {
-    font-size: 30px;
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: var(--color-dark-green);
-    text-align: center;
-}
-
-.contact-subtitle {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.modal-content .contact-form {
-    padding: 0;
-    box-shadow: none;
-    text-align: left;
+    padding: 16px;
+    font-size: 16px;
+    margin-top: 10px;
+    font-weight: 700;
 }
 
 /* Успешная модалка */
 .center-button-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 .success-ok-btn {
-    padding: 12px 30px;
+    padding: 14px 35px;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 10px;
     background-color: var(--color-accent);
     color: var(--color-white);
     border: 2px solid var(--color-accent);
     cursor: pointer;
-    transition: transform 0.3s ease-in-out, filter 0.3s ease-in-out, background-color 0.3s;
+    transition: all 0.3s ease;
+    font-weight: 700;
 }
 
 .success-ok-btn:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 10px rgba(255,0,0,0.9));
     background-color: #d32f2f;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
 }
 
 #success-modal .modal-content {
@@ -644,27 +860,41 @@ body {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    padding: 40px 30px;
 }
 
 /* Модальное окно контактов */
 .contact-info-block {
     text-align: left;
-    margin-top: 15px;
+    margin-top: 20px;
     line-height: 1.8;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .contact-info-block i {
-    margin-right: 8px;
-    color: #4CAF50;
+    margin-right: 10px;
+    color: var(--color-main-green);
+    width: 20px;
+    text-align: center;
+}
+
+.contact-info-block p {
+    margin-bottom: 15px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--color-light-gray);
+}
+
+.contact-info-block p:last-child {
+    border-bottom: none;
 }
 
 .social-links-modal {
-    margin-top: 15px;
+    margin-top: 25px;
     display: flex;
     gap: 15px;
     align-items: center;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .social-links-modal a {
@@ -673,45 +903,15 @@ body {
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
+    background: var(--color-light-gray);
 }
 
-/* WhatsApp в модальном окне */
-.social-links-modal .whatsapp-dropdown .dropdown-toggle i {
-    font-size: 24px;
-    color: #25D366;
-    transition: all 0.3s ease;
-}
-
-.social-links-modal .whatsapp-dropdown .dropdown-toggle:hover i {
-    color: #128C7E;
-    transform: scale(1.15);
-}
-
-/* Instagram в модальном окне */
-.instagram-link-modal i {
-    color: #E1306C;
-    font-size: 24px;
-    transition: all 0.3s ease;
-}
-
-.instagram-link-modal:hover i {
-    color: #C13584;
-    transform: scale(1.15);
-}
-
-/* TikTok в модальном окне */
-.tiktok-link-modal i {
-    color: #000000;
-    font-size: 22px;
-    transition: all 0.3s ease;
-}
-
-.tiktok-link-modal:hover i {
-    color: #EE1D52;
-    transform: scale(1.15);
+.social-links-modal a:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
 }
 
 /* Секция новостей */
@@ -722,7 +922,7 @@ body {
 
 .news-grid {
     display: flex;
-    gap: 30px;
+    gap: 40px;
     overflow-x: auto;
     padding: 20px 10px;
     scroll-behavior: smooth;
@@ -733,15 +933,15 @@ body {
     flex: 0 0 auto;
     width: 350px;
     background: var(--color-white);
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .news-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
 }
 
 .news-image-container {
@@ -757,7 +957,7 @@ body {
 }
 
 .news-card:hover .news-img {
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
 .news-content {
@@ -788,77 +988,6 @@ body {
     font-weight: 500;
 }
 
-/* Стили для статусов заявок */
-.status-badge {
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.status-new {
-  background: #ffeb3b;
-  color: #333;
-}
-
-.status-processing {
-  background: #2196f3;
-  color: white;
-}
-
-.status-completed {
-  background: #4caf50;
-  color: white;
-}
-
-/* Стили для кнопок действий с заявками */
-.request-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.status-btn {
-  padding: 6px 10px;
-  border: none;
-  border-radius: 4px;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-}
-
-.processing-btn {
-  background: #2196f3;
-  color: white;
-}
-
-.processing-btn:hover {
-  background: #1976d2;
-  transform: scale(1.05);
-}
-
-.completed-btn {
-  background: #b7ff00;
-  color: white;
-}
-
-.completed-btn:hover {
-  background: #2701ff;
-  transform: scale(1.05);
-}
-
-.delete-btn {
-  background: #dc3545;
-  color: white;
-}
-
-.delete-btn:hover {
-  background: #c82333;
-  transform: scale(1.05);
-}
-
 /* Адаптивность для мобильных устройств */
 @media (max-width: 768px) {
     .header .container {
@@ -877,20 +1006,11 @@ body {
         height: 40px;
     }
 
-    /* Кнопка админа на мобильных - перемещена правее */
     .admin-login-top {
         position: absolute;
         top: 15px;
         right: 15px;
         font-size: 28px;
-        color: #ffffff;
-        text-decoration: none;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        transition: all 0.4s ease;
-        filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
-        z-index: 1000;
         background-color: rgba(11, 61, 46, 0.8);
         padding: 8px;
         border-radius: 50%;
@@ -914,7 +1034,7 @@ body {
     }
 
     .quality-cards-grid {
-        gap: 15px;
+        gap: 20px;
         padding: 15px 5px 20px 5px;
     }
 
@@ -943,7 +1063,61 @@ body {
         border-bottom-width: 3px;
     }
 
-    /* Секция качества на мобильных */
+    /* Адаптивность модального окна карточки */
+    .card-modal-content {
+        width: 95%;
+        margin: 10px;
+        max-height: 95vh;
+    }
+
+    .card-modal-layout {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .card-modal-left {
+        flex: none;
+        padding: 25px;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .product-image-container {
+        max-width: 220px;
+        height: 220px;
+        margin-bottom: 20px;
+    }
+
+    .card-modal-right {
+        padding: 25px;
+        max-height: 50vh;
+    }
+
+    .product-title {
+        font-size: 1.4em;
+    }
+
+    .detail-item {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .detail-icon {
+        width: 38px;
+        height: 38px;
+        margin-right: 12px;
+        font-size: 16px;
+    }
+
+    .product-actions {
+        gap: 10px;
+    }
+
+    .btn {
+        padding: 14px 20px;
+        font-size: 14px;
+    }
+
     .quality-section {
         padding: 60px 15px;
         min-height: 100vh;
@@ -964,16 +1138,19 @@ body {
     }
 
     .modal-content {
-        width: 90%;
-        padding: 20px;
+        width: 95%;
+        padding: 25px 20px;
+        margin: 10px;
     }
 
     .modal-title {
-        font-size: 24px;
+        font-size: 22px;
     }
 
     .social-links-modal a {
-        font-size: 28px;
+        font-size: 22px;
+        width: 45px;
+        height: 45px;
     }
 
     .footer .container {
@@ -1046,36 +1223,1149 @@ body {
         font-size: 1.1em;
     }
 
-    /* Горизонтальная прокрутка карточек на мобильных */
     .quality-cards-grid {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        overflow-y: hidden;
-        -webkit-overflow-scrolling: touch;
-        gap: 15px;
+        gap: 20px;
         padding: 15px 10px 20px 10px;
-        scroll-behavior: smooth;
-        width: 100%;
     }
 
     .quality-card {
-        flex: 0 0 auto;
         width: 250px;
-    }
-
-    .quality-cards-grid::-webkit-scrollbar {
-        height: 6px;
-    }
-    .quality-cards-grid::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    .quality-cards-grid::-webkit-scrollbar-thumb {
-        background: rgba(0, 107, 60, 0.5);
-        border-radius: 10px;
     }
 }
 
 html {
     scroll-behavior: smooth;
+}
+
+/* УЛУЧШЕННОЕ МОДАЛЬНОЕ ОКНО КАРТОЧКИ */
+.card-modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    position: relative;
+    max-width: 90%;
+    width: 700px;
+    max-height: 85vh;
+    overflow: hidden;
+    animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-modal-layout {
+    display: flex;
+    min-height: 400px;
+    max-height: 70vh;
+}
+
+/* Левая колонка - изображение */
+.card-modal-left {
+    flex: 0 0 45%;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--color-border);
+    position: relative;
+}
+
+.product-image-container {
+    width: 100%;
+    max-width: 240px;
+    height: 240px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-image-container:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-price-section {
+    text-align: center;
+    width: 100%;
+}
+
+.price-badge {
+    background: linear-gradient(135deg, var(--color-accent), #d32f2f);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+    transition: all 0.3s ease;
+}
+
+.price-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+}
+
+.price-label {
+    display: block;
+    font-size: 0.8em;
+    opacity: 0.9;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.product-price {
+    font-size: 1.3em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Правая колонка - описание */
+.card-modal-right {
+    flex: 1;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 100%;
+}
+
+.product-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--color-light-gray);
+    padding-bottom: 15px;
+}
+
+.product-title {
+    color: var(--color-dark-green);
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.product-rating {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stars {
+    color: #FFD700;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.rating-text {
+    color: var(--color-secondary);
+    font-size: 0.85em;
+    font-weight: 600;
+}
+
+.product-description {
+    margin-bottom: 20px;
+    background: var(--color-light-gray);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 3px solid var(--color-main-green);
+}
+
+.product-description p {
+    color: var(--color-text-body);
+    font-size: 0.9em;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.product-details {
+    flex: 1;
+    margin-bottom: 20px;
+    overflow-y: auto;
+}
+
+.detail-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    padding: 15px;
+    background: var(--color-light-gray);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.detail-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+    border-color: var(--color-main-green);
+}
+
+.detail-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--color-main-green), var(--color-dark-green));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.detail-item:hover .detail-icon {
+    transform: scale(1.05);
+}
+
+.detail-content {
+    flex: 1;
+}
+
+.detail-content h4 {
+    color: var(--color-dark-green);
+    font-size: 0.95em;
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.detail-content p {
+    color: var(--color-text-body);
+    font-size: 0.85em;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.product-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .card-modal-content {
+        width: 95%;
+        margin: 10px;
+        max-height: 90vh;
+    }
+
+    .card-modal-layout {
+        flex-direction: column;
+        min-height: auto;
+        max-height: 85vh;
+    }
+
+    .card-modal-left {
+        flex: none;
+        padding: 20px;
+        border-right: none;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .product-image-container {
+        max-width: 200px;
+        height: 200px;
+        margin-bottom: 15px;
+    }
+
+    .card-modal-right {
+        padding: 20px;
+        max-height: 50vh;
+    }
+
+    .product-title {
+        font-size: 1.3em;
+    }
+
+    .detail-item {
+        padding: 12px;
+        margin-bottom: 12px;
+    }
+
+    .detail-icon {
+        width: 32px;
+        height: 32px;
+        margin-right: 10px;
+        font-size: 14px;
+    }
+
+    .product-actions {
+        gap: 8px;
+    }
+}
+
+/* Анимация появления */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* КОМПАКТНОЕ МОДАЛЬНОЕ ОКНО КАРТОЧКИ */
+.card-modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    position: relative;
+    max-width: 90%;
+    width: 600px;
+    max-height: 80vh;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.card-modal-layout {
+    display: flex;
+    min-height: 450px;
+    max-height: 70vh;
+}
+
+/* Левая колонка - изображение */
+.card-modal-left {
+    flex: 0 0 40%;
+    background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-right: 1px solid #e0e0e0;
+}
+
+.product-image-container {
+    width: 100%;
+    max-width: 180px;
+    height: 180px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-price-section {
+    text-align: center;
+    width: 100%;
+    margin-top: auto;
+}
+
+.price-badge {
+    background: linear-gradient(135deg, var(--color-main-green), var(--color-dark-green));
+    color: white;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Правая колонка - контент */
+.card-modal-right {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: white;
+}
+
+.product-header {
+    margin-bottom: 20px;
+}
+
+.product-title {
+    color: var(--color-dark-green);
+    font-size: 1.4em;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.product-subtitle {
+    color: #666;
+    font-size: 0.9em;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Секции контента */
+.content-sections {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.content-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 3px solid var(--color-main-green);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.section-icon {
+    width: 20px;
+    height: 20px;
+    background: var(--color-main-green);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 10px;
+}
+
+.section-title {
+    color: var(--color-dark-green);
+    font-size: 0.95em;
+    font-weight: 600;
+    margin: 0;
+}
+
+.section-content {
+    color: #333;
+    font-size: 0.85em;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+    margin: 5px 0;
+}
+
+/* Кнопки действий */
+.product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-compact {
+    padding: 10px 15px;
+    font-size: 0.85em;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .card-modal-content {
+        width: 95%;
+        margin: 10px;
+        max-height: 85vh;
+    }
+
+    .card-modal-layout {
+        flex-direction: column;
+        min-height: auto;
+        max-height: 80vh;
+    }
+
+    .card-modal-left {
+        flex: none;
+        padding: 15px;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .product-image-container {
+        max-width: 120px;
+        height: 120px;
+    }
+
+    .card-modal-right {
+        padding: 15px;
+        max-height: 50vh;
+    }
+
+    .product-title {
+        font-size: 1.2em;
+    }
+
+    .content-section {
+        padding: 12px;
+    }
+
+    .product-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+/* Анимация появления */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-15px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* УЛУЧШЕННОЕ МОДАЛЬНОЕ ОКНО КАРТОЧКИ */
+.card-modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    position: relative;
+    max-width: 95%;
+    width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+    animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-modal-layout {
+    display: flex;
+    min-height: 550px;
+    max-height: 80vh;
+}
+
+/* Левая колонка - изображение */
+.card-modal-left {
+    flex: 0 0 45%;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--color-border);
+    position: relative;
+}
+
+.product-image-container {
+    width: 100%;
+    max-width: 320px;
+    height: 320px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    margin-bottom: 30px;
+    transition: all 0.3s ease;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+    padding: 10px;
+}
+
+.product-image-container:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-price-section {
+    text-align: center;
+    width: 100%;
+}
+
+.price-badge {
+    background: linear-gradient(135deg, var(--color-accent), #d32f2f);
+    color: white;
+    padding: 18px 28px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.price-badge:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(233, 30, 99, 0.5);
+}
+
+.price-label {
+    display: block;
+    font-size: 0.9em;
+    opacity: 0.9;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.product-price {
+    font-size: 1.6em;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Правая колонка - контент */
+.card-modal-right {
+    flex: 1;
+    padding: 40px 35px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: white;
+}
+
+.product-header {
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--color-light-gray);
+    padding-bottom: 20px;
+}
+
+.product-title {
+    color: var(--color-dark-green);
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+}
+
+.product-subtitle {
+    color: #666;
+    font-size: 1.1em;
+    line-height: 1.4;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Секции контента */
+.content-sections {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.content-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 25px;
+    border-left: 4px solid var(--color-main-green);
+    transition: all 0.3s ease;
+}
+
+.content-section:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.section-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--color-main-green);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.section-title {
+    color: var(--color-dark-green);
+    font-size: 1.2em;
+    font-weight: 700;
+    margin: 0;
+}
+
+.section-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+    margin: 12px 0;
+}
+
+.section-content {
+    color: #333;
+    font-size: 1em;
+    line-height: 1.6;
+    margin: 0;
+    text-align: justify;
+}
+
+/* Кнопки действий */
+.product-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: auto;
+}
+
+.btn-compact {
+    padding: 14px 20px;
+    font-size: 1em;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-compact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Анимация появления */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 1024px) {
+    .card-modal-content {
+        width: 95%;
+        max-width: 95%;
+    }
+    
+    .card-modal-layout {
+        min-height: 500px;
+    }
+    
+    .card-modal-left {
+        padding: 30px 20px;
+    }
+    
+    .product-image-container {
+        max-width: 280px;
+        height: 280px;
+    }
+    
+    .card-modal-right {
+        padding: 30px 25px;
+    }
+    
+    .product-title {
+        font-size: 1.7em;
+    }
+}
+
+@media (max-width: 768px) {
+    .card-modal-content {
+        width: 98%;
+        margin: 10px;
+        max-height: 95vh;
+    }
+
+    .card-modal-layout {
+        flex-direction: column;
+        min-height: auto;
+        max-height: 90vh;
+    }
+
+    .card-modal-left {
+        flex: none;
+        padding: 25px 20px;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .product-image-container {
+        max-width: 200px;
+        height: 200px;
+        margin-bottom: 20px;
+    }
+
+    .card-modal-right {
+        padding: 25px 20px;
+        max-height: 50vh;
+    }
+
+    .product-title {
+        font-size: 1.5em;
+    }
+
+    .content-section {
+        padding: 20px;
+    }
+    
+    .content-sections {
+        gap: 20px;
+    }
+
+    .product-actions {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .btn-compact {
+        padding: 12px 16px;
+    }
+    
+    .section-content {
+        font-size: 0.95em;
+    }
+}
+
+@media (max-width: 480px) {
+    .card-modal-content {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        max-height: 100vh;
+        height: 100vh;
+    }
+    
+    .card-modal-layout {
+        max-height: 100vh;
+        height: 100%;
+    }
+    
+    .card-modal-left {
+        padding: 20px 15px;
+    }
+    
+    .product-image-container {
+        max-width: 180px;
+        height: 180px;
+    }
+    
+    .card-modal-right {
+        padding: 20px 15px;
+        max-height: 60vh;
+    }
+    
+    .product-title {
+        font-size: 1.3em;
+    }
+    
+    .content-section {
+        padding: 15px;
+    }
+}
+
+/* Улучшение скроллбара для модального окна */
+.card-modal-right::-webkit-scrollbar {
+    width: 6px;
+}
+
+.card-modal-right::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.card-modal-right::-webkit-scrollbar-thumb {
+    background: var(--color-main-green);
+    border-radius: 3px;
+}
+
+.card-modal-right::-webkit-scrollbar-thumb:hover {
+    background: var(--color-dark-green);
+}
+
+/* Добавьте эти стили в конец файла styles.css */
+
+/* Стили для кнопок в модальном окне контактов */
+.social-links-modal {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.social-links-modal .whatsapp-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.social-links-modal .whatsapp-dropdown .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #25D366;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.social-links-modal .whatsapp-dropdown .dropdown-toggle:hover {
+    background: #128C7E;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.social-links-modal .whatsapp-dropdown .dropdown-toggle i {
+    font-size: 20px;
+    color: white;
+}
+
+.social-links-modal .whatsapp-dropdown .dropdown-toggle span {
+    color: white;
+    font-weight: 600;
+}
+
+.social-links-modal .social-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.social-links-modal .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: var(--color-light-gray);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.social-links-modal .social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.social-links-modal .instagram-btn {
+    background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+}
+
+.social-links-modal .instagram-btn:hover {
+    background: linear-gradient(45deg, #3048C5, #4839C2, #7229A3, #B02A73, #D02763, #FD0D0D);
+}
+
+.social-links-modal .tiktok-btn {
+    background: #000000;
+}
+
+.social-links-modal .tiktok-btn:hover {
+    background: #333333;
+}
+
+.social-links-modal .social-btn i {
+    font-size: 20px;
+    color: white;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .social-links-modal {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .social-links-modal .whatsapp-dropdown .dropdown-toggle {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+    
+    .social-links-modal .social-buttons {
+        gap: 10px;
+    }
+    
+    .social-links-modal .social-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .social-links-modal .social-btn i {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .social-links-modal {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .social-links-modal .whatsapp-dropdown .dropdown-toggle {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .social-links-modal .social-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Стили для блока социальных сетей в модальном окне контактов */
+.social-links-modal {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+.social-links-modal .whatsapp-dropdown {
+    position: relative;
+}
+
+.social-links-modal .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background-color: #25D366;
+    color: white;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.2em;
+}
+
+.social-links-modal .dropdown-toggle:hover {
+    background-color: #128C7E;
+    transform: translateY(-2px);
+}
+
+.social-links-modal .social-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.social-links-modal .social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1.2em;
+}
+
+.social-links-modal .instagram-btn {
+    background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+    color: white;
+}
+
+.social-links-modal .tiktok-btn {
+    background-color: #000000;
+    color: white;
+}
+
+.social-links-modal .social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Стили для выпадающего меню WhatsApp */
+.social-links-modal .whatsapp-dropdown-menu {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    min-width: 200px;
+    z-index: 1000;
+    margin-bottom: 10px;
+}
+
+.social-links-modal .whatsapp-dropdown-menu::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 8px solid transparent;
+    border-top-color: white;
+}
+
+.social-links-modal .whatsapp-option {
+    text-align: center;
+}
+
+.social-links-modal .whatsapp-number {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.social-links-modal .whatsapp-name {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.social-links-modal .whatsapp-link {
+    display: inline-block;
+    background-color: #25D366;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+}
+
+.social-links-modal .whatsapp-link:hover {
+    background-color: #128C7E;
 }

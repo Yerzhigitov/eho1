@@ -37,24 +37,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 MAX_FILE_SIZE = 16 * 1024 * 1024  # 16MB
 
 # =============================
-# ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
-# =============================
-
-def allowed_file(filename):
-    """Проверка допустимости файла"""
-    return ('.' in filename and 
-            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS and 
-            not filename.startswith('.') and
-            len(filename) < 100)
-
-def generate_filename(original_filename, file_type):
-    """Генерация уникального имени файла"""
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    unique_id = str(uuid.uuid4())[:8]
-    extension = original_filename.rsplit('.', 1)[1].lower()
-    return f"{file_type}_{timestamp}_{unique_id}.{extension}"
-
-# =============================
 # МОДЕЛИ БАЗЫ ДАННЫХ
 # =============================
 
@@ -76,22 +58,16 @@ class PriceRequest(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(20), default='new')
 
-class Product(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text)
-    price = db.Column(db.Float)
-    image_url = db.Column(db.String(300))
-    category = db.Column(db.String(100))
-    is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
 class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text)
     image_url = db.Column(db.String(300))
-    card_type = db.Column(db.String(50))
+    card_type = db.Column(db.String(50), default='benefit')
+    composition = db.Column(db.Text)
+    advantages = db.Column(db.Text)
+    application = db.Column(db.Text)
+    price = db.Column(db.String(100))
     is_active = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
@@ -99,11 +75,54 @@ class Card(db.Model):
 class News(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
-    content = db.Column(db.Text)
+    content = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.String(300))
     is_published = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+# =============================
+# ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+# =============================
+
+def allowed_file(filename):
+    """Проверка допустимости файла"""
+    return ('.' in filename and 
+            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS and 
+            not filename.startswith('.') and
+            len(filename) < 100)
+
+def generate_filename(original_filename, file_type):
+    """Генерация уникального имени файла"""
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    unique_id = str(uuid.uuid4())[:8]
+    extension = original_filename.rsplit('.', 1)[1].lower()
+    return f"{file_type}_{timestamp}_{unique_id}.{extension}"
+
+# =============================
+# ДЕКОРАТОРЫ
+# =============================
+
+def login_required(f):
+    """Декоратор для проверки авторизации"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({'success': False, 'message': 'Требуется авторизация'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
+
+def admin_required(f):
+    """Декоратор для проверки прав администратора"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({'success': False, 'message': 'Требуется авторизация'}), 401
+        user = User.query.get(session['user_id'])
+        if not user or user.role not in ['admin', 'superadmin']:
+            return jsonify({'success': False, 'message': 'Недостаточно прав'}), 403
+        return f(*args, **kwargs)
+    return decorated_function
 
 # =============================
 # ИНИЦИАЛИЗАЦИЯ БАЗЫ ДАННЫХ
@@ -135,58 +154,64 @@ def init_db():
                         title="🌱 Чистый Состав",
                         description="Создан только из природных компонентов. Без искусственных подсластителей, красителей и ГМО.",
                         image_url="static/IMG_9896.DNG",
-                        card_type="benefit"
+                        card_type="benefit",
+                        composition="Натуральные растительные экстракты, стевия, эритритол. Без искусственных добавок и консервантов.",
+                        advantages="Нулевая калорийность, безопасен для диабетиков, не вызывает кариес, полностью натуральный",
+                        application="Идеален для напитков, выпечки, кондитерских изделий и молочной продукции",
+                        price="От 1500 сом/кг"
                     ),
                     Card(
                         title="💫 Высокая Сладость",
                         description="Обладает сверхвысокой интенсивностью сладости. 1 кг продукта заменяет до 400 кг сахара.",
                         image_url="static/IMG_9893.DNG",
-                        card_type="benefit"
+                        card_type="benefit",
+                        composition="Концентрированные гликозиды стевии, наполнитель эритритол, натуральные усилители вкуса",
+                        advantages="Экономичность использования, длительный срок хранения, стабильность свойств, не оставляет послевкусия",
+                        application="Промышленное производство напитков, консервов, соусов и десертов",
+                        price="От 1800 сом/кг"
                     ),
                     Card(
                         title="🔥 Термостабильность",
                         description="Идеален для приготовления горячих напитков и любой выпечки, сохраняя свойства при нагреве.",
                         image_url="static/IMG_9894.DNG",
-                        card_type="benefit"
+                        card_type="benefit",
+                        composition="Термостабильные подсластители, натуральные стабилизаторы, растительные экстракты",
+                        advantages="Не теряет сладость при нагреве до 200°C, подходит для пастеризации, стабилен при заморозке",
+                        application="Выпечка, кондитерские изделия, горячие напитки, варенья и джемы",
+                        price="От 1700 сом/кг"
                     ),
                     Card(
                         title="🍯 Натуральный Сироп",
                         description="Натуральный сироп 'Эко-Сластин X-8' без консервантов. Прозрачный и чистый продукт для здорового питания.",
                         image_url="static/sirop.png",
-                        card_type="benefit"
+                        card_type="benefit",
+                        composition="Вода, экстракт стевии, натуральные ароматизаторы, растительные экстракты",
+                        advantages="Легко растворяется, удобная жидкая форма, готов к использованию, длительный срок хранения",
+                        application="Напитки, коктейли, соусы, маринады, домашняя кулинария",
+                        price="От 800 сом/литр"
                     )
                 ]
                 db.session.bulk_save_objects(initial_cards)
                 db.session.commit()
                 print("✅ Начальные карточки созданы")
+            
+            # Обновляем существующие карточки если нужно
+            cards = Card.query.all()
+            for card in cards:
+                if not card.composition:
+                    card.composition = "Стевия экстракт, эритритол, натуральные ароматизаторы. Без ГМО, без искусственных консервантов."
+                if not card.advantages:
+                    card.advantages = "Нулевая калорийность, безопасен для диабетиков, не вызывает кариес, натуральный состав."
+                if not card.application:
+                    card.application = "Кондитерские изделия, напитки, молочная продукция, выпечка, десерты."
+                if not card.price:
+                    card.price = "от 450 сом/кг"
+            
+            db.session.commit()
+            print("✅ Данные карточек обновлены")
                 
         except Exception as e:
             print(f"❌ Ошибка инициализации БД: {e}")
-
-# =============================
-# ДЕКОРАТОРЫ
-# =============================
-
-def login_required(f):
-    """Декоратор для проверки авторизации"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            return jsonify({'success': False, 'message': 'Требуется авторизация'}), 401
-        return f(*args, **kwargs)
-    return decorated_function
-
-def admin_required(f):
-    """Декоратор для проверки прав администратора"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            return jsonify({'success': False, 'message': 'Требуется авторизация'}), 401
-        user = User.query.get(session['user_id'])
-        if not user or user.role not in ['admin', 'superadmin']:
-            return jsonify({'success': False, 'message': 'Недостаточно прав'}), 403
-        return f(*args, **kwargs)
-    return decorated_function
 
 # =============================
 # ОБРАБОТЧИКИ ОШИБОК
@@ -210,8 +235,23 @@ def index():
     """Главная страница"""
     try:
         benefits_cards = Card.query.filter_by(card_type='benefit', is_active=True).order_by(Card.id).all()
+        # Преобразуем в список словарей
+        cards_data = []
+        for card in benefits_cards:
+            card_dict = {
+                'id': card.id,
+                'title': card.title,
+                'description': card.description,
+                'image_url': card.image_url,
+                'composition': card.composition or '',
+                'advantages': card.advantages or '',
+                'application': card.application or '',
+                'price': card.price or ''
+            }
+            cards_data.append(card_dict)
+            
         news_items = News.query.filter_by(is_published=True).order_by(News.created_at.desc()).limit(3).all()
-        return render_template('index.html', benefits_cards=benefits_cards, news_items=news_items)
+        return render_template('index.html', benefits_cards=cards_data, news_items=news_items)
     except Exception as e:
         print(f"Ошибка загрузки главной страницы: {e}")
         return render_template('index.html', benefits_cards=[], news_items=[])
@@ -325,6 +365,10 @@ def get_cards():
             'image_url': c.image_url,
             'card_type': c.card_type,
             'is_active': c.is_active,
+            'composition': c.composition,
+            'advantages': c.advantages,
+            'application': c.application,
+            'price': c.price,
             'created_at': c.created_at.strftime('%d.%m.%Y %H:%M')
         } for c in cards])
     except Exception as e:
@@ -343,7 +387,12 @@ def create_card():
             title=data.get('title', ''),
             description=data.get('description', ''),
             image_url=data.get('image_url', ''),
-            card_type=data.get('card_type', 'benefit')
+            card_type=data.get('card_type', 'benefit'),
+            is_active=data.get('is_active', True),
+            composition=data.get('composition', ''),
+            advantages=data.get('advantages', ''),
+            application=data.get('application', ''),
+            price=data.get('price', '')
         )
         db.session.add(card)
         db.session.commit()
@@ -368,6 +417,15 @@ def update_card(card_id):
             card.image_url = data['image_url']
         if 'is_active' in data:
             card.is_active = data['is_active']
+        # Новые поля
+        if 'composition' in data:
+            card.composition = data['composition']
+        if 'advantages' in data:
+            card.advantages = data['advantages']
+        if 'application' in data:
+            card.application = data['application']
+        if 'price' in data:
+            card.price = data['price']
         
         card.updated_at = datetime.utcnow()
         db.session.commit()
@@ -389,12 +447,31 @@ def delete_card(card_id):
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
+@app.route('/api/cards/<int:card_id>', methods=['GET'])
+def get_card_details(card_id):
+    """API для получения деталей карточки"""
+    try:
+        card = Card.query.get_or_404(card_id)
+        return jsonify({
+            'id': card.id,
+            'title': card.title,
+            'description': card.description,
+            'image_url': card.image_url,
+            'composition': card.composition or '',
+            'advantages': card.advantages or '',
+            'application': card.application or '',
+            'price': card.price or '',
+            'is_active': card.is_active,
+            'created_at': card.created_at.strftime('%d.%m.%Y %H:%M')
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 # =============================
 # API: НОВОСТИ
 # =============================
 
 @app.route('/api/news', methods=['GET'])
-@login_required
 def get_news():
     """API для получения новостей"""
     try:
@@ -522,7 +599,7 @@ def delete_request(request_id):
         r = PriceRequest.query.get_or_404(request_id)
         db.session.delete(r)
         db.session.commit()
-        return jsonify({'success': True})
+        return jsonify({'success': True, 'message': 'Заявка удалена'})
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
@@ -539,34 +616,104 @@ def update_request(request_id):
         if 'status' in data:
             r.status = data['status']
         db.session.commit()
-        return jsonify({'success': True})
+        return jsonify({'success': True, 'message': 'Заявка обновлена'})
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 # =============================
-# API: СТАТИСТИКА
+# API: СТАТИСТИКА И ДАННЫЕ ДЛЯ АДМИНКИ
 # =============================
 
 @app.route('/api/dashboard-stats', methods=['GET'])
 @login_required
 def dashboard_stats():
-    """API для получения статистики"""
+    """API для получения статистики дашборда"""
     try:
         total_requests = PriceRequest.query.count()
         new_requests = PriceRequest.query.filter_by(status='new').count()
-        total_users = User.query.count()
+        processing_requests = PriceRequest.query.filter_by(status='processing').count()
         total_cards = Card.query.count()
+        active_cards = Card.query.filter_by(is_active=True).count()
         total_news = News.query.count()
-        recent = PriceRequest.query.order_by(PriceRequest.created_at.desc()).limit(5).all()
-        recent_data = [{'id': r.id, 'name': r.name, 'created_at': r.created_at.strftime('%d.%m.%Y')} for r in recent]
+        published_news = News.query.filter_by(is_published=True).count()
+        
+        # Последние заявки
+        recent_requests = PriceRequest.query.order_by(PriceRequest.created_at.desc()).limit(5).all()
+        recent_data = [{
+            'id': r.id, 
+            'name': r.name, 
+            'email': r.email,
+            'status': r.status,
+            'created_at': r.created_at.strftime('%d.%m.%Y %H:%M')
+        } for r in recent_requests]
+        
         return jsonify({
-            'total_requests': total_requests,
-            'new_requests': new_requests,
-            'total_users': total_users,
-            'total_cards': total_cards,
-            'total_news': total_news,
+            'success': True,
+            'stats': {
+                'total_requests': total_requests,
+                'new_requests': new_requests,
+                'processing_requests': processing_requests,
+                'total_cards': total_cards,
+                'active_cards': active_cards,
+                'total_news': total_news,
+                'published_news': published_news
+            },
             'recent_requests': recent_data
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/api/admin-full-data', methods=['GET'])
+@login_required
+def get_admin_full_data():
+    """Получение всех данных для админки"""
+    try:
+        cards = Card.query.all()
+        news = News.query.all()
+        requests = PriceRequest.query.all()
+        users = User.query.all()
+        
+        return jsonify({
+            'success': True,
+            'cards': [{
+                'id': c.id,
+                'title': c.title,
+                'description': c.description,
+                'image_url': c.image_url,
+                'card_type': c.card_type,
+                'is_active': c.is_active,
+                'composition': c.composition,
+                'advantages': c.advantages,
+                'application': c.application,
+                'price': c.price,
+                'created_at': c.created_at.strftime('%d.%m.%Y %H:%M')
+            } for c in cards],
+            'news': [{
+                'id': n.id,
+                'title': n.title,
+                'content': n.content,
+                'image_url': n.image_url,
+                'is_published': n.is_published,
+                'created_at': n.created_at.strftime('%d.%m.%Y %H:%M')
+            } for n in news],
+            'requests': [{
+                'id': r.id,
+                'name': r.name,
+                'email': r.email,
+                'phone': r.phone,
+                'message': r.message,
+                'response': r.response,
+                'created_at': r.created_at.strftime('%d.%m.%Y %H:%M'),
+                'status': r.status
+            } for r in requests],
+            'users': [{
+                'id': u.id,
+                'username': u.username,
+                'email': u.email,
+                'role': u.role,
+                'created_at': u.created_at.strftime('%d.%m.%Y %H:%M')
+            } for u in users]
         })
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
@@ -577,9 +724,8 @@ def dashboard_stats():
 
 @app.route('/api/users', methods=['GET'])
 @login_required
-@admin_required
 def get_users():
-    """API для получения пользователей"""
+    """API для получения всех пользователей"""
     try:
         users = User.query.all()
         return jsonify([{
@@ -587,59 +733,50 @@ def get_users():
             'username': u.username,
             'email': u.email,
             'role': u.role,
-            'created_at': u.created_at.strftime('%d.%m.%Y')
+            'created_at': u.created_at.strftime('%d.%m.%Y %H:%M')
         } for u in users])
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/api/users', methods=['POST'])
 @login_required
-@admin_required
 def create_user():
-    """API для создания пользователя"""
+    """API для создания пользователя с ролями: admin, manager, smm"""
     try:
         data = request.get_json() or {}
         username = data.get('username', '').strip()
         email = data.get('email', '').strip()
         password = data.get('password', '')
-        role = data.get('role', 'admin')
+        role = data.get('role', 'manager')  # admin, manager, smm
 
         if not username or not email or not password:
-            return jsonify({'success': False, 'message': 'Заполните username, email и password'}), 400
+            return jsonify({'success': False, 'message': 'Заполните все поля'}), 400
 
         if User.query.filter_by(username=username).first():
             return jsonify({'success': False, 'message': 'Пользователь с таким именем уже существует'}), 400
+        
         if User.query.filter_by(email=email).first():
             return jsonify({'success': False, 'message': 'Пользователь с таким email уже существует'}), 400
 
-        user = User(username=username, email=email, password_hash=generate_password_hash(password), role=role)
+        user = User(
+            username=username, 
+            email=email, 
+            password_hash=generate_password_hash(password), 
+            role=role
+        )
         db.session.add(user)
         db.session.commit()
-        return jsonify({'success': True, 'message': 'Пользователь создан'})
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'success': False, 'message': str(e)}), 500
-
-@app.route('/api/users/<int:user_id>', methods=['DELETE'])
-@login_required
-@admin_required
-def delete_user(user_id):
-    """API для удаления пользователя"""
-    try:
-        if user_id == session.get('user_id'):
-            return jsonify({'success': False, 'message': 'Нельзя удалить самого себя'}), 400
-            
-        user = User.query.get_or_404(user_id)
-        db.session.delete(user)
-        db.session.commit()
-        return jsonify({'success': True})
+        
+        return jsonify({
+            'success': True, 
+            'message': f'Пользователь {username} создан с ролью {role}'
+        })
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/api/users/<int:user_id>', methods=['PATCH'])
 @login_required
-@admin_required
 def update_user(user_id):
     """API для обновления пользователя"""
     try:
@@ -657,9 +794,22 @@ def update_user(user_id):
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
-# =============================
-# ЗАПУСК ПРИЛОЖЕНИЯ
-# =============================
+@app.route('/api/users/<int:user_id>', methods=['DELETE'])
+@login_required
+def delete_user(user_id):
+    """API для удаления пользователя"""
+    try:
+        if user_id == session.get('user_id'):
+            return jsonify({'success': False, 'message': 'Нельзя удалить самого себя'}), 400
+            
+        user = User.query.get_or_404(user_id)
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'Пользователь удалён'})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 
 if __name__ == '__main__':
     # Инициализация базы данных

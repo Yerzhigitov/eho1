@@ -31,10 +31,12 @@
 
     <section class="hero-section">
         <div class="hero-content">
-            <h1 class="hero-title">
-                <span class="brand-name-highlight">ЭКО-СЛАСТИН</span>: Сладкий вкус. Чистый состав
-            </h1>
-            <p class="hero-subtitle">Подсластитель для производства. НЕ СОДЕРЖИТ ГМО, АСПАРТАМ, ЦИКЛАМАТ НАТРИЯ.</p>
+            <!-- Обновите этот блок в hero-section -->
+<h1 class="hero-title">
+    <span class="brand-name-highlight">ЭКО-СЛАСТИН</span>:<br>
+    <span style="font-size: 0.8em; font-weight: 600;">Сладкий вкус. Чистый состав</span>
+</h1>
+<p class="hero-subtitle">Подсластитель для производства. НЕ СОДЕРЖИТ ГМО, АСПАРТАМ, ЦИКЛАМАТ НАТРИЯ.</p>
             <button class="btn btn-primary" id="open-modal-btn">Запросить прайс-лист</button>
         </div>
     </section>
@@ -44,18 +46,21 @@
             <h2 class="section-title">Сладость, созданная природой</h2>
             <h2 class="section-title card-group-title">Наши стандарты</h2> 
             
-            <div class="quality-cards-grid">
-                {% for card in benefits_cards %}
-                <div class="quality-card">
-                    <div class="card-image-container">
-                        <img src="{{ card.image_url }}" alt="{{ card.title }}" class="card-img" onerror="this.src='static/placeholder.jpg'"> 
+            <div class="quality-cards-grid" id="quality-cards-carousel">
+                <div class="quality-cards-track" id="quality-cards-track">
+                    {% for card in benefits_cards %}
+                    <div class="quality-card" data-card-id="{{ card.id }}">
+                        <div class="card-image-container">
+                            <img src="{{ card.image_url }}" alt="{{ card.title }}" class="card-img" onerror="this.src='static/placeholder.jpg'"> 
+                        </div>
+                        <h3 class="card-title">{{ card.title }}</h3>
+                        <p class="card-description">
+                            {{ card.description }}
+                        </p>
                     </div>
-                    <h3 class="card-title">{{ card.title }}</h3>
-                    <p class="card-description">
-                        {{ card.description }}
-                    </p>
+                    {% endfor %}
                 </div>
-                {% endfor %}
+                <div class="scroll-indicator" id="scroll-indicator"></div>
             </div>
         </div>
     </section>
@@ -74,24 +79,111 @@
     <section id="news" class="news-section">
         <div class="container">
             <h2 class="section-title">📰 Новости и события</h2>
-            <div class="news-grid">
-                {% for news in news_items %}
-                <div class="news-card">
-                    {% if news.image_url %}
-                    <div class="news-image-container">
-                        <img src="{{ news.image_url }}" alt="{{ news.title }}" class="news-img" onerror="this.src='static/news-placeholder.jpg'">
+            <div class="news-grid" id="news-carousel">
+                <div class="quality-cards-track" id="news-track">
+                    {% for news in news_items %}
+                    <div class="news-card">
+                        {% if news.image_url %}
+                        <div class="news-image-container">
+                            <img src="{{ news.image_url }}" alt="{{ news.title }}" class="news-img" onerror="this.src='static/news-placeholder.jpg'">
+                        </div>
+                        {% endif %}
+                        <div class="news-content">
+                            <h3 class="news-title">{{ news.title }}</h3>
+                            <p class="news-text">{{ news.content }}</p>
+                            <div class="news-date">{{ news.created_at.strftime('%d.%m.%Y') }}</div>
+                        </div>
                     </div>
-                    {% endif %}
-                    <div class="news-content">
-                        <h3 class="news-title">{{ news.title }}</h3>
-                        <p class="news-text">{{ news.content }}</p>
-                        <div class="news-date">{{ news.created_at.strftime('%d.%m.%Y') }}</div>
-                    </div>
+                    {% endfor %}
                 </div>
-                {% endfor %}
             </div>
         </div>
     </section>
+
+   <!-- УЛУЧШЕННОЕ МОДАЛЬНОЕ ОКНО КАРТОЧКИ -->
+<div id="card-modal" class="modal">
+    <div class="modal-content card-modal-content">
+        <span class="close-btn card-modal-close">&times;</span>
+        
+        <div class="card-modal-layout">
+            <!-- Левая колонка - изображение -->
+            <div class="card-modal-left">
+                <div class="product-image-container">
+                    <img id="card-modal-img" src="" alt="Изображение продукта" class="product-image">
+                </div>
+                <div class="product-price-section">
+                    <div class="price-badge">
+                        <span class="price-label">Цена:</span>
+                        <span id="card-modal-price" class="product-price">Цена не указана</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Правая колонка - контент -->
+            <div class="card-modal-right">
+                <div class="product-header">
+                    <h2 id="card-modal-title" class="product-title">ЭКО спастин 1/200</h2>
+                    <p class="product-subtitle" id="card-modal-subtitle">для кондитерских изделий</p>
+                </div>
+
+                <div class="content-sections">
+                    <!-- Состав -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-list"></i>
+                            </div>
+                            <h3 class="section-title">Состав</h3>
+                        </div>
+                        <div class="section-divider"></div>
+                        <p class="section-content" id="card-modal-composition">
+                            сукралоза, сахаринат натрия, мальтитол, фруктоза, декстроза, сахарная пудра
+                        </p>
+                    </div>
+
+                    <!-- Преимущества -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3 class="section-title">Преимущества</h3>
+                        </div>
+                        <div class="section-divider"></div>
+                        <p class="section-content" id="card-modal-advantages">
+                            Очень сладкий. Стабилен при нагревании. Близок к сахару по телу. Улучшает вкус, мягкость. Даёт быстрый и выраженный эффект карамелизации. Имеет температурную стабильность.
+                        </p>
+                    </div>
+
+                    <!-- Применение -->
+                    <div class="content-section">
+                        <div class="section-header">
+                            <div class="section-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <h3 class="section-title">Применение</h3>
+                        </div>
+                        <div class="section-divider"></div>
+                        <p class="section-content" id="card-modal-application">
+                            Особенно хорошо подходит: крема, начинки, глазури, помадки (мягкая текстура, влажность, вкус). Печенье, пироженные с пониженной калорийностью (сохраняется структура благодаря пудре).
+                        </p>
+                    </div>
+                </div>
+
+                <div class="product-actions">
+                    <button class="btn btn-primary btn-compact" onclick="openPriceModal()">
+                        <i class="fas fa-tag"></i>
+                        Запросить Прайс-Лист
+                    </button>
+                    <button class="btn btn-secondary btn-compact" onclick="openContactsModal()">
+                        <i class="fas fa-phone"></i>
+                        Контакты
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <div id="price-modal" class="modal">
         <div class="modal-content">
@@ -137,85 +229,79 @@
     </div>
 
     <div id="contacts-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2 class="section-title modal-title">Свяжитесь с нами</h2>
-            <p class="contact-subtitle">Вы можете связаться с нами любым удобным способом:</p>
-            <div class="contact-info-block">
-                <p><i class="fas fa-phone"></i> Телефон: <b>+996 553 588 528</b> / <b>+996 552 606 226</b></p>
-                <p><i class="fas fa-envelope"></i> Email: <b>nazili4kakg@mail.ru</b></p>
-                <p><i class="fas fa-map-marker-alt"></i> Адрес: Кыргызстан, г. Каракол, Кадыраке 77</p>
-                <div class="social-links-modal">
-
-                    <div class="whatsapp-dropdown">
-                        <a href="#" class="dropdown-toggle">
-                            <i class="fab fa-whatsapp"></i>
-                            <span class="whatsapp-label"></span>
-                        </a>
-                        <div class="whatsapp-dropdown-menu">
-                            <div class="whatsapp-option">
-                                <div class="whatsapp-number">+996 503 700 768</div>
-                                <div class="whatsapp-name">Основной номер</div>
-                                <a href="https://wa.me/996503700768?text=Здравствуйте!%20Я%20заинтересован%20в%20продукции%20ЭКО-СЛАСТИН" target="_blank" class="whatsapp-link">
-                                    Написать в WhatsApp
-                                </a>
-                            </div>
-                            <div class="whatsapp-option">
-                                <div class="whatsapp-number">+996 552 606 226</div>
-                                <div class="whatsapp-name">Дополнительный номер</div>
-                                <a href="https://wa.me/996552606226?text=Здравствуйте!%20Я%20заинтересован%20в%20продукции%20ЭКО-СЛАСТИН" target="_blank" class="whatsapp-link">
-                                    Написать в WhatsApp
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <a href="https://www.instagram.com/rik_napitki_kg?igsh=MWxlN25mNDhsNWx6OA%3D%3D" target="_blank" class="instagram-link-modal">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="https://www.tiktok.com/@napitki_rik.karakol_?_r=1&_t=ZM-91HwQ77i59Q" target="_blank" class="tiktok-link-modal">
-                        <i class="fab fa-tiktok"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <footer class="footer">
-        <div class="container">
-            <a href="#" class="footer-logo-link"><img src="static/logo2.png" alt="ЭКО-СЛАСТИН Логотип" class="footer-logo-img"></a>
-            <div class="footer-info">
-                <p>Тел.: +(996) 553-588-528, +(996) 552-606-226</p>
-                <p>Email: nazili4kakg@mail.ru</p>
-                <p>Производство: Кыргызстан, г. Каракол</p>
-            </div>
-            <div class="social-links">
-
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h2 class="section-title modal-title">Свяжитесь с нами</h2>
+        <p class="contact-subtitle">Вы можете связаться с нами любым удобным способом:</p>
+        <div class="contact-info-block">
+            <p><i class="fas fa-phone"></i> Телефон: <b>+996 553 588 528</b> / <b>+996 552 606 226</b></p>
+            <p><i class="fas fa-envelope"></i> Email: <b>nazili4kakg@mail.ru</b></p>
+            <p><i class="fas fa-map-marker-alt"></i> Адрес: Кыргызстан, г. Каракол, Кадыраке 77</p>
+            
+            <!-- Улучшенный блок социальных сетей как в футере -->
+            <div class="social-links-modal">
                 <div class="whatsapp-dropdown">
                     <a href="#" class="dropdown-toggle">
                         <i class="fab fa-whatsapp"></i>
                     </a>
                     <div class="whatsapp-dropdown-menu">
                         <div class="whatsapp-option">
-                            <div class="whatsapp-number">+996 503 700 768</div>
-                            <div class="whatsapp-name">Основной номер</div>
-                            <a href="https://wa.me/996503700768?text=Здравствуйте!%20Я%20заинтересован%20в%20продукции%20ЭКО-СЛАСТИН" target="_blank" class="whatsapp-link">
-                                Написать в WhatsApp
-                            </a>
-                        </div>
-                        <div class="whatsapp-option">
                             <div class="whatsapp-number">+996 552 606 226</div>
-                            <div class="whatsapp-name">Дополнительный номер</div>
+                            <div class="whatsapp-name">Основной номер</div>
                             <a href="https://wa.me/996552606226?text=Здравствуйте!%20Я%20заинтересован%20в%20продукции%20ЭКО-СЛАСТИН" target="_blank" class="whatsapp-link">
                                 Написать в WhatsApp
                             </a>
                         </div>
                     </div>
                 </div>
-                <a href="https://www.instagram.com/rik_napitki_kg?igsh=MWxlN25mNDhsNWx6OA%3D%3D" target="_blank" class="instagram-link-fa">
+                
+                <div class="social-buttons">
+                    <a href="https://www.instagram.com/rik_napitki_kg?igsh=MWxlN25mNDhsNWx6OA%3D%3D" target="_blank" class="social-btn instagram-btn">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@napitki_rik.karakol_?_r=1&_t=ZM-91HwQ77i59Q" target="_blank" class="social-btn tiktok-btn">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-logos">
+                <a href="#" class="footer-logo-link">
+                    <img src="static/logo2.png" alt="ЭКО-СЛАСТИН Логотип" class="footer-logo-img">
+                </a>
+                <a href="#" class="footer-logo-link second-logo">
+                    <img src="static/halal.png" alt="Название второго логотипа" class="footer-logo-img second-logo-img">
+                </a>
+            </div>
+            <div class="footer-info">
+                <p>Тел.: +(996) 553-588-528, +(996) 552-606-226</p>
+                <p>Email: nazili4kakg@mail.ru</p>
+                <p>Производство: Кыргызстан, г. Каракол</p>
+            </div>
+            <div class="social-links">
+                <div class="whatsapp-dropdown">
+                    <a href="#" class="dropdown-toggle">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <div class="whatsapp-dropdown-menu">
+                        <div class="whatsapp-option">
+                            <div class="whatsapp-number">+996 552 606 226</div>
+                            <div class="whatsapp-name">Основной номер</div>
+                            <a href="https://wa.me/996552606226?text=Здравствуйте!%20Я%20заинтересован%20в%20продукции%20ЭКО-СЛАСТИН" target="_blank" class="whatsapp-link">
+                                Написать в WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.instagram.com/rik_napitki_kg?igsh=MWxlN25mNDhsNWx6OA%3D%3D" target="_blank" class="social-btn instagram-btn">
                     <i class="fab fa-instagram"></i>
                 </a>
-                <a href="https://www.tiktok.com/@napitki_rik.karakol_?_r=1&_t=ZM-91HwQ77i59Q" target="_blank" class="tiktok-link-fa">
+                <a href="https://www.tiktok.com/@napitki_rik.karakol_?_r=1&_t=ZM-91HwQ77i59Q" target="_blank" class="social-btn tiktok-btn">
                     <i class="fab fa-tiktok"></i>
                 </a>
             </div>
@@ -223,76 +309,319 @@
     </footer>
 
     <script>
+    // КЛАСС ДЛЯ УПРАВЛЕНИЯ КАРУСЕЛЬЮ С КОЛЕСИКОМ МЫШИ
+    class WheelCarousel {
+        constructor(containerId) {
+            this.container = document.getElementById(containerId);
+            if (!this.container) return;
+            
+            this.track = this.container.querySelector('.quality-cards-track');
+            this.cards = Array.from(this.track.children);
+            this.isScrolling = false;
+            this.scrollPosition = 0;
+            this.maxScroll = 0;
+            this.cardWidth = 0;
+            this.gap = 40;
+            
+            this.init();
+        }
+        
+        init() {
+            if (this.cards.length === 0) return;
+            
+            const firstCard = this.cards[0];
+            this.cardWidth = firstCard.offsetWidth + this.gap;
+            this.maxScroll = this.cardWidth * this.cards.length - this.container.offsetWidth;
+            
+            this.addEventListeners();
+            window.addEventListener('resize', () => this.handleResize());
+        }
+        
+        handleResize() {
+            if (this.cards.length === 0) return;
+            
+            const firstCard = this.cards[0];
+            this.cardWidth = firstCard.offsetWidth + this.gap;
+            this.maxScroll = this.cardWidth * this.cards.length - this.container.offsetWidth;
+            
+            this.scrollPosition = Math.min(this.scrollPosition, this.maxScroll);
+            this.updateTrackPosition();
+        }
+        
+        handleWheel(event) {
+            event.preventDefault();
+            
+            const delta = Math.max(-1, Math.min(1, event.deltaY));
+            const speedMultiplier = Math.min(Math.abs(event.deltaY) / 10, 5);
+            
+            let newPosition = this.scrollPosition + delta * this.cardWidth * 0.5 * speedMultiplier;
+            newPosition = Math.max(0, Math.min(newPosition, this.maxScroll));
+            
+            this.smoothScrollTo(newPosition);
+        }
+        
+        smoothScrollTo(targetPosition, duration = 300) {
+            if (this.isScrolling) return;
+            
+            const startPosition = this.scrollPosition;
+            const distance = targetPosition - startPosition;
+            const startTime = performance.now();
+            
+            this.isScrolling = true;
+            
+            const animateScroll = (currentTime) => {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                
+                this.scrollPosition = startPosition + (distance * easeOutQuart);
+                this.updateTrackPosition();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateScroll);
+                } else {
+                    this.isScrolling = false;
+                }
+            };
+            
+            requestAnimationFrame(animateScroll);
+        }
+        
+        updateTrackPosition() {
+            this.track.style.transform = `translateX(-${this.scrollPosition}px)`;
+        }
+        
+        addEventListeners() {
+            this.container.addEventListener('wheel', (e) => this.handleWheel(e), { passive: false });
+        }
+    }
 
-        const modal = document.getElementById('price-modal');
-        const openBtn = document.getElementById('open-modal-btn');
-        const closeBtn = modal.querySelector('.close-btn');
-        const form = modal.querySelector('.contact-form');
-        const successModal = document.getElementById('success-modal'); 
-        const successCloseBtn = successModal.querySelector('.success-close-btn'); 
-        const successOkBtn = successModal.querySelector('.success-ok-btn'); 
+    // Данные карточек
+    let cardsData = [];
 
-        function openModal(targetModal) {
+    // Функция для загрузки данных карточек
+    function loadCardsData() {
+        const cardElements = document.querySelectorAll('.quality-card');
+        cardsData = [];
+        
+        cardElements.forEach(cardElement => {
+            const cardId = cardElement.getAttribute('data-card-id');
+            const title = cardElement.querySelector('.card-title').textContent;
+            const description = cardElement.querySelector('.card-description').textContent;
+            const imageUrl = cardElement.querySelector('.card-img').src;
+            
+            const card = {
+                id: cardId,
+                title: title,
+                description: description,
+                image_url: imageUrl,
+                composition: '',
+                advantages: '',
+                application: '',
+                price: ''
+            };
+            
+            cardsData.push(card);
+        });
+    }
+
+    // Функция открытия модального окна карточки
+    function openCardModal(cardId) {
+        const card = cardsData.find(c => c.id == cardId);
+        
+        if (!card) {
+            console.error('Card not found:', cardId);
+            return;
+        }
+        
+        // Сначала пытаемся получить данные с сервера
+        fetch(`/api/cards/${cardId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(fullCardData => {
+                // Заполняем модальное окно данными с сервера
+                fillCardModal(fullCardData, card);
+            })
+            .catch(error => {
+                console.error('Error loading card details:', error);
+                // Если сервер недоступен, используем базовые данные
+                fillCardModal({}, card);
+            });
+    }
+
+    // Функция заполнения модального окна данными
+    function fillCardModal(fullCardData, card) {
+        // Изображение
+        const modalImg = document.getElementById('card-modal-img');
+        if (fullCardData.image_url) {
+            modalImg.src = fullCardData.image_url;
+        } else if (card.image_url) {
+            modalImg.src = card.image_url;
+        } else {
+            modalImg.src = 'static/placeholder.jpg';
+        }
+        
+        // Заголовок и подзаголовок
+        const title = fullCardData.title || card.title || 'ЭКО спастин 1/200';
+        const titleParts = title.split(' для ');
+        
+        document.getElementById('card-modal-title').textContent = titleParts[0];
+        if (titleParts[1]) {
+            document.getElementById('card-modal-subtitle').textContent = 'для ' + titleParts[1];
+        } else {
+            document.getElementById('card-modal-subtitle').textContent = 'для кондитерских изделий';
+        }
+        
+        // Состав
+        document.getElementById('card-modal-composition').textContent = 
+            fullCardData.composition || card.composition || 'сукралоза, сахаринат натрия, мальтитол, фруктоза, декстроза, сахарная пудра';
+        
+        // Преимущества
+        document.getElementById('card-modal-advantages').textContent = 
+            fullCardData.advantages || card.advantages || 'Очень сладкий. Стабилен при нагревании. Близок к сахару по телу. Улучшает вкус, мягкость. Даёт быстрый и выраженный эффект карамелизации. Имеет температурную стабильность.';
+        
+        // Применение
+        document.getElementById('card-modal-application').textContent = 
+            fullCardData.application || card.application || 'Особенно хорошо подходит: крема, начинки, глазури, помадки (мягкая текстура, влажность, вкус). Печенье, пироженные с пониженной калорийностью (сохраняется структура благодаря пудре).';
+        
+        // Цена
+        const price = fullCardData.price || card.price;
+        if (price && price.trim() !== '') {
+            document.getElementById('card-modal-price').textContent = price;
+        } else {
+            document.getElementById('card-modal-price').textContent = 'Цена не указана';
+        }
+        
+        // Открываем модальное окно
+        openModal(document.getElementById('card-modal'));
+    }
+
+    // Базовые функции для работы с модальными окнами
+    function openModal(targetModal) {
+        if (targetModal) {
             targetModal.style.display = "flex";
             document.body.style.overflow = "hidden";
         }
+    }
 
-        function closeModal(targetModal) {
+    function closeModal(targetModal) {
+        if (targetModal) {
             targetModal.style.display = "none";
-            if (modal.style.display === "none" && successModal.style.display === "none") {
-                document.body.style.overflow = "auto"; 
+            const modals = document.querySelectorAll('.modal');
+            const anyModalOpen = Array.from(modals).some(modal => modal.style.display === 'flex');
+            if (!anyModalOpen) {
+                document.body.style.overflow = "auto";
             }
         }
+    }
 
-        openBtn.onclick = function() {
-            openModal(modal);
-        }
+    function openPriceModal() {
+        closeModal(document.getElementById('card-modal'));
+        openModal(document.getElementById('price-modal'));
+    }
 
-        closeBtn.onclick = function() {
-            closeModal(modal);
-        }
+    function openContactsModal() {
+        closeModal(document.getElementById('card-modal'));
+        openModal(document.getElementById('contacts-modal'));
+    }
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = {
-                name: document.getElementById('modal-name').value,
-                email: document.getElementById('modal-email').value,
-                phone: document.getElementById('modal-phone').value,
-                message: document.getElementById('modal-message').value
-            };
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        loadCardsData();
+        
+        const qualityCarousel = new WheelCarousel('quality-cards-carousel');
+        const newsCarousel = new WheelCarousel('news-carousel');
+        
+        const modal = document.getElementById('price-modal');
+        const openBtn = document.getElementById('open-modal-btn');
+        const closeBtn = modal ? modal.querySelector('.close-btn') : null;
+        const form = modal ? modal.querySelector('.contact-form') : null;
+        const successModal = document.getElementById('success-modal'); 
+        const successCloseBtn = successModal ? successModal.querySelector('.success-close-btn') : null; 
+        const successOkBtn = successModal ? successModal.querySelector('.success-ok-btn') : null; 
+        const cardModalClose = document.querySelector('.card-modal-close');
+        const cardModal = document.getElementById('card-modal');
 
-            fetch('/api/submit-request', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    closeModal(modal);
-                    form.reset();
-                    openModal(successModal);
-                } else {
-                    alert('Ошибка при отправке заявки: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Произошла ошибка при отправке заявки');
+        // Добавляем обработчики для карточек
+        document.querySelectorAll('.quality-card').forEach(cardElement => {
+            cardElement.style.cursor = 'pointer';
+            cardElement.addEventListener('click', function() {
+                const cardId = this.getAttribute('data-card-id');
+                openCardModal(cardId);
             });
         });
 
-        successCloseBtn.onclick = function() {
-            closeModal(successModal);
+        if (openBtn) {
+            openBtn.onclick = function() {
+                openModal(modal);
+            }
+        }
+
+        if (closeBtn) {
+            closeBtn.onclick = function() {
+                closeModal(modal);
+            }
+        }
+
+        if (cardModalClose) {
+            cardModalClose.onclick = function() {
+                closeModal(cardModal);
+            }
+        }
+
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = {
+                    name: document.getElementById('modal-name').value,
+                    email: document.getElementById('modal-email').value,
+                    phone: document.getElementById('modal-phone').value,
+                    message: document.getElementById('modal-message').value
+                };
+
+                fetch('/api/submit-request', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        closeModal(modal);
+                        form.reset();
+                        openModal(successModal);
+                    } else {
+                        alert('Ошибка при отправке заявки: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Произошла ошибка при отправке заявки');
+                });
+            });
+        }
+
+        if (successCloseBtn) {
+            successCloseBtn.onclick = function() {
+                closeModal(successModal);
+            }
         }
         
-        successOkBtn.onclick = function() {
-            closeModal(successModal);
+        if (successOkBtn) {
+            successOkBtn.onclick = function() {
+                closeModal(successModal);
+            }
         }
 
         window.onclick = function(event) {
             if (event.target == modal) closeModal(modal);
             if (event.target == successModal) closeModal(successModal);
+            if (event.target == cardModal) closeModal(cardModal);
         }
 
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -309,130 +638,66 @@
             });
         });
 
-
         const contactsModal = document.getElementById('contacts-modal');
         const contactsLink = document.querySelector('.nav a[href="#contact"]');
-        const contactsCloseBtn = contactsModal.querySelector('.close-btn');
+        const contactsCloseBtn = contactsModal ? contactsModal.querySelector('.close-btn') : null;
 
-        function openContactsModal() {
-            contactsModal.style.display = "flex";
+        if (contactsLink) {
+            contactsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                openContactsModal();
+            });
         }
 
-        function closeContactsModal() {
-            contactsModal.style.display = "none";
+        if (contactsCloseBtn) {
+            contactsCloseBtn.onclick = function() {
+                closeModal(contactsModal);
+            };
         }
 
-        contactsLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            openContactsModal();
+        const dropdowns = document.querySelectorAll('.whatsapp-dropdown');
+        
+        dropdowns.forEach(dropdown => {
+            const toggle = dropdown.querySelector('.dropdown-toggle');
+            const menu = dropdown.querySelector('.whatsapp-dropdown-menu');
+            
+            if (!toggle || !menu) return;
+            
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isVisible = menu.style.display === 'block';
+
+                document.querySelectorAll('.whatsapp-dropdown-menu').forEach(otherMenu => {
+                    if (otherMenu !== menu) {
+                        otherMenu.style.display = 'none';
+                    }
+                });
+                menu.style.display = isVisible ? 'none' : 'block';
+            });
         });
-
-        contactsCloseBtn.onclick = function() {
-            closeContactsModal();
-        };
-
-        window.addEventListener('click', function(event) {
-            if (event.target === contactsModal) {
-                closeContactsModal();
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.whatsapp-dropdown')) {
+                document.querySelectorAll('.whatsapp-dropdown-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
             }
         });
-
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const dropdowns = document.querySelectorAll('.whatsapp-dropdown');
-            
-            dropdowns.forEach(dropdown => {
-                const toggle = dropdown.querySelector('.dropdown-toggle');
-                const menu = dropdown.querySelector('.whatsapp-dropdown-menu');
-                
-                if (!toggle || !menu) return;
-                
-                toggle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const isVisible = menu.style.display === 'block';
-
-                    document.querySelectorAll('.whatsapp-dropdown-menu').forEach(otherMenu => {
-                        if (otherMenu !== menu) {
-                            otherMenu.style.display = 'none';
-                        }
-                    });
-                    menu.style.display = isVisible ? 'none' : 'block';
-                });
-            });
-            
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.whatsapp-dropdown')) {
+        
+        document.querySelectorAll('.whatsapp-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.stopPropagation();
+                setTimeout(() => {
                     document.querySelectorAll('.whatsapp-dropdown-menu').forEach(menu => {
                         menu.style.display = 'none';
                     });
-                }
-            });
-            
-
-            document.querySelectorAll('.whatsapp-link').forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    setTimeout(() => {
-                        document.querySelectorAll('.whatsapp-dropdown-menu').forEach(menu => {
-                            menu.style.display = 'none';
-                        });
-                    }, 100);
-                });
+                }, 100);
             });
         });
+    });
+</script>
 
-        // Горизонтальная прокрутка карточек
-        const scrollContainer = document.querySelector('.quality-cards-grid');
-        if (scrollContainer) {
-            scrollContainer.addEventListener('wheel', (evt) => {
-                evt.preventDefault();
-                scrollContainer.scrollBy({
-                    left: evt.deltaY < 0 ? -150 : 150,
-                    behavior: 'smooth'
-                });
-            });
-
-            let autoScroll;
-            let isHovered = false;
-
-            function startAutoScroll() {
-                autoScroll = setInterval(() => {
-                    if (!isHovered) {
-                        scrollContainer.scrollBy({ left: 1, behavior: 'smooth' });
-                        if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 1) {
-                            scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
-                        }
-                    }
-                }, 20);
-            }
-
-            scrollContainer.addEventListener('mouseenter', () => { isHovered = true; });
-            scrollContainer.addEventListener('mouseleave', () => { isHovered = false; });
-            startAutoScroll();
-        }
-
-        const newsGrid = document.querySelector('.news-grid');
-        if (newsGrid && newsGrid.children.length > 3) {
-            let newsAutoScroll;
-            let isNewsHovered = false;
-
-            function startNewsAutoScroll() {
-                newsAutoScroll = setInterval(() => {
-                    if (!isNewsHovered) {
-                        newsGrid.scrollBy({ left: 1, behavior: 'smooth' });
-                        if (newsGrid.scrollLeft + newsGrid.clientWidth >= newsGrid.scrollWidth - 1) {
-                            newsGrid.scrollTo({ left: 0, behavior: 'smooth' });
-                        }
-                    }
-                }, 30);
-            }
-
-            newsGrid.addEventListener('mouseenter', () => { isNewsHovered = true; });
-            newsGrid.addEventListener('mouseleave', () => { isNewsHovered = false; });
-            startNewsAutoScroll();
-        }
-    </script>
 </body>
 </html>
